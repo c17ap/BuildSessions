@@ -7,7 +7,7 @@
                 </div>
                 {{#if currentUser}}
                     <div class="buildSession-enroll col-md-1">
-                        <button class="coming" id="{{_id}}">Coming</button>
+                        <button class="{{comingnotcoming _id}}" id="{{_id}}">{{comingnotcoming _id}}</button>
                     </div>
                 {{/if}}
                 <div class="buildSession-attendance col-md-9">
