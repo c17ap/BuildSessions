@@ -12,7 +12,7 @@ Template.usersList.helpers({
         return Roles.userIsInRole(user, ['admin'])?'revoke':'grant';
     },
     isNotMe: function(user) {
-        return user==Meteor.userId();
+        return !(user===Meteor.userId());
     }
 });
 
