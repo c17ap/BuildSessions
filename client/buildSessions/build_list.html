@@ -1,20 +1,28 @@
 <template name="buildSessionList">
-    <div class="buildSession">
+    <div class="buildSession container-fluid">
+        <table class="table table-hover">
+        <tbody>
         {{#each buildSession}}
-            <div class="buildSession row">
-                <div class="buildSession-date col-md-2">
-                    Session on {{date}} from {{starttime}} to {{endtime}}
-                </div>
-                {{#if currentUser}}
-                    <div class="buildSession-enroll col-md-1">
-                        <button class="{{comingnotcoming _id}}" id="{{_id}}">{{comingnotcoming _id}}</button>
+            <tr class="buildSession row {{success _id}}">
+                <td class="buildSession-date col-xs-3">
+                    <div class="h4"> {{dateMoment date}}
+                        <br />
+                        <small>
+                            {{durationMoment starttime endtime}}
+                        </small>
                     </div>
+                </td>
+                {{#if currentUser}}
+                    <td class="buildSession-enroll col-xs-2 middlealign" >
+                        <button class="{{comingnotcoming _id}}" id="{{_id}}">{{comingnotcoming _id}}</button>
+                    </td>
                 {{/if}}
-                <div class="buildSession-attendance col-md-9">
+                <td class="buildSession-attendance col-xs-7">
                     {{attend}}
-                    <!--{{> attendance}}-->
-                </div>
-            </div>
+                </td>
+            </tr>
         {{/each}}
+        </tbody>
+        </table>
     </div>
 </template>
