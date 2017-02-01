@@ -8,10 +8,11 @@ var thisuseriscoming = function (sessionid) {
 
 Template.buildSessionList.helpers({
     buildSession: function() {
-        return BuildSessions.find();
+        return BuildSessions.find({}, {sort: { date : 1 } });
     },
-    dateMoment: function(date, st, et) {
-        return moment(date).format('dddd M/D');
+    dateMoment: function(date, st) {
+        console.log(st);
+        return moment(date.date).add(moment.duration(st)).format('ddd M/D @ h:mm');
     },
     durationMoment: function(st, et) {
         return moment.duration(et).subtract(moment.duration(st)).humanize();
