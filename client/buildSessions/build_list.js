@@ -23,7 +23,6 @@ Template.buildSessionList.events({
 
     'click .coming': function (e) {
         e.preventDefault();
-      //  n = BuildSessions.findOne(e.target.id);
         BuildSessions.update({_id: e.target.id}, {$push: {attend: Meteor.userId()}});
 
 }

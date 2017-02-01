@@ -33,4 +33,4 @@ Template.usersList.events({
             hasPermission: true
         });
     }
-})
+});
