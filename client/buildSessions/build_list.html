@@ -11,8 +11,12 @@
                     </div>
                 {{/if}}
                 <div class="buildSession-attendance col-md-9">
-                    {{attend}}
-                    <!--{{> attendance}}-->
+                   {{#each team}}
+                       {{value}}:
+                            {{#each queryuser ../attend value}}
+                               {{username}}
+                            {{/each}}
+                   {{/each}}
                 </div>
             </div>
         {{/each}}
