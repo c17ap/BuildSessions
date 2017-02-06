@@ -21,8 +21,9 @@ Meteor.methods({
 
         //make a build session object:
         var session = {
+            date: e.date,
             starttime: e.starttime,
-            length: e.length,
+            endtime: e.endtime,
             createdBy: loggedInUser,
             attend: []
         };

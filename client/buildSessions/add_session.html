@@ -1,14 +1,33 @@
 <template name="addSession">
-    <form class="form form-horizontal">
-        <div class="form-group">
-           <div class="input-group date" id="datetimepicker">
-               <input type="text" name="starttime" id="starttime" class="form-control" />
-               <span class="input-group-addon">
-                   <span class="glyphicon glyphicon-calendar"></span>
-               </span>
-           </div>
-            <input type="text" class="form-control" id="length" name="length" placeholder="build session length"/>
-            <button type="submit" class="btn btn-primary">Add Build Session</button>
+    <div class="container">
+        <form>
+
+        <div class="form-group row vertical-align">
+            <label class="col-xs-2 col-form-label h2">Date:</label>
+            <div class="col-xs-10" id="datepicker">
+
+
+            </div>
         </div>
-    </form>
+
+        <div class="form-group row vertical-align">
+            <label class="col-xs-2 col-form-label h2">Start:</label>
+            <div class="col-xs-4" id="starttimepicker"></div>
+
+            <label class="col-xs-2 col-form-label h2">End:</label>
+            <div class="col-xs-4" id="endtimepicker">
+
+
+            </div>
+        </div>
+
+        <!--<input type="text" class="form-control" id="length" name="length" placeholder="build session length"/>-->
+
+        <div class="form-group row">
+            <div class="offset-sm-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Add Build Session</button>
+            </div>
+        </div>
+     </form>
+    </div>
 </template>

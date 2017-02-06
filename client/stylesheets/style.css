@@ -1,0 +1,8 @@
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+
+.table > tbody > tr > .middlealign {
+    vertical-align: middle;
+}
