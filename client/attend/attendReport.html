@@ -1,0 +1,20 @@
+<template name="attendReport">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <td>count</td>
+            <td>who</td>
+            <td>when attended</td>
+        </tr>
+        </thead>
+        <tbody>
+    {{#each usersAttend}}
+       <tr class="{{noattend count}}">
+            <td>{{count}}</td>
+            <td>{{username}}</td>
+            <td>{{sessions}}</td>
+       </tr>
+    {{/each}}
+        </tbody>
+    </table>
+</template>

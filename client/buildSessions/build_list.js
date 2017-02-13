@@ -27,12 +27,10 @@ Template.buildSessionList.helpers({
         return Teams;
     },
     queryuser: function(users, teamid) {
-        console.log(users);
-        console.log(teamid);
         return Meteor.users.find({
             _id: {$in: users},
             profile: {team: teamid}
-        });
+        }, { username: 1, _id: 0 } );
     },
 });
 

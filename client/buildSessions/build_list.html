@@ -1,5 +1,5 @@
 <template name="buildSessionList">
-    <tr class="buildSession container-fluid">
+    <div class="buildSession container-fluid">
         <table class="table table-hover">
         <tbody>
         {{#each buildSession}}
@@ -23,6 +23,7 @@
                             {{#each queryuser ../attend value}}
                                {{username}}
                             {{/each}}
+                        <br />
                    {{/each}}
                 </td>
             </tr>
