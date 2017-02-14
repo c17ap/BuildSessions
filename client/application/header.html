@@ -1,4 +1,27 @@
 <template name="header">
-    {{>loginButtons}}
-    {{>atForm}}
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{pathFor 'buildSessionList'}}">Build Sessions</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                {{#if isAdmin}}
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a class="nav-link" href="{{pathFor 'addSession'}}">add session</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{{pathFor 'attendReport'}}">view attendance</a>
+                    </li>
+                    <li>
+                       <a class="nav-link" href="{{pathFor 'usersList'}}">grant permission</a>
+                    </li>
+                </ul>
+                {{/if}}
+                <ul class="nav navbar-nav navbar-right">
+                    {{>atNavButton}}
+                </ul>
+            </div>
+        </div>
+    </nav>
 </template>
