@@ -5,7 +5,13 @@
         {{#each buildSession}}
             <tr class="buildSession row {{success _id}}">
                 <td class="buildSession-date col-xs-3">
-                    <div class="h4"> {{dateMoment date starttime}}
+
+                    <div class="h4">
+                        {{dateMoment date starttime}}
+                        {{#if isAdmin}}
+                            <a class="btn-xs delete" href="#"><span class="glyphicon glyphicon-remove"></span></a>
+                        {{/if}}
+
                         <br />
                         <small>
                             {{durationMoment starttime endtime}}
@@ -18,12 +24,17 @@
                     </td>
                 {{/if}}
                 <td class="buildSession-attendance col-md-9">
-                   {{#each team}}
-                       {{value}}:
-                            {{#each queryuser ../attend value}}
-                               {{username}}
-                            {{/each}}
-                        <br />
+
+                    {{#each team}}
+                        {{#if anybodycoming ../attend value}}
+                           {{value}}:
+                            <ul class="comma-list">
+                                {{#each queryuser ../attend value}}
+                                    <li class="small">{{username}}</li>
+                                {{/each}}
+                            </ul>
+                            <br />
+                        {{/if}}
                    {{/each}}
                 </td>
             </tr>

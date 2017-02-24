@@ -6,3 +6,16 @@
 .table > tbody > tr > .middlealign {
     vertical-align: middle;
 }
+.delete {
+    color: #d9534f;
+}
+
+.comma-list {
+    list-style-type: none;
+    display: inline;
+    padding-left:0;
+}
+.comma-list li { display: inline }
+/* Here's the interesting part: */
+.comma-list li:after { content: ", " }
+.comma-list li:last-child:after { content: "" }

@@ -32,3 +32,4 @@ useraccounts:bootstrap
 service-configuration
 momentjs:moment
 useraccounts:iron-routing
+matdutour:popup-confirm

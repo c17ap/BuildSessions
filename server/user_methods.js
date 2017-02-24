@@ -30,6 +30,18 @@ Meteor.methods({
 
         BuildSessions.insert(session);
     },
+    removeSession: function(e) {
+        var loggedInUser = Meteor.user()
+
+        //logged in user must be admin
+        if (!loggedInUser ||
+            !Roles.userIsInRole(loggedInUser,
+                ['admin'])) {
+            throw new Meteor.Error(403, "Access denied")
+        }
+
+        BuildSessions.remove(e.sessionId);
+    },
 
     setAdmin: function (e) {
         var loggedInUser = Meteor.user();
