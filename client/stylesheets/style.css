@@ -10,6 +10,10 @@
     color: #d9534f;
 }
 
+.absent {
+    color: #d9534f;
+}
+
 .comma-list {
     list-style-type: none;
     display: inline;

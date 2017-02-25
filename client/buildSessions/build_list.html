@@ -29,8 +29,12 @@
                         {{#if anybodycoming ../attend value}}
                            {{value}}:
                             <ul class="comma-list">
-                                {{#each queryuser ../attend value}}
-                                    <li class="small">{{username}}</li>
+                                {{#each queryuser ../attend value ../_id}}
+                                    <li class="small {{absent}}">{{username}}
+                                    {{#if isAbsent}}
+                                        ({{absent}})
+                                    {{/if}}
+                                    </li>
                                 {{/each}}
                             </ul>
                             <br />

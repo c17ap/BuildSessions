@@ -29,11 +29,19 @@ Template.buildSessionList.helpers({
     team: function() {
         return Teams;
     },
-    queryuser: function(users, teamid) {
+    queryuser: function(users, teamid, sessionid) {
         return Meteor.users.find({
             _id: {$in: users},
             profile: {team: teamid}
-        }, { username: 1, _id: 0 } );
+        }, {
+            transform: function (doc) {
+                    doc.isAbsent = BuildSessions.find({_id: sessionid, absent: doc._id}).count()>0
+                    doc.absent = doc.isAbsent?"absent":"";
+                    doc.sessionid = sessionid;
+                    return doc;
+                }
+            }
+        );
     },
     anybodycoming: function(users, teamid) {
         return Meteor.users.find({
@@ -47,9 +55,25 @@ Template.buildSessionList.events({
  //    if(session.attend.includes(e.target.Id) e.gettext == add){
  //  //  if(check(session.attend), Meteor.userId == true){
 
+    //if you click on a person
+    'click li': function() {
+        if(Roles.userIsInRole(Meteor.userId(), ['admin'])) {
+            if(this.isAbsent) BuildSessions.update({_id: this.sessionid}, {$pull: {absent: this._id}});
+            else BuildSessions.update({_id: this.sessionid}, {$addToSet: {absent: this._id}});
+        }
+    },
     'click .not-coming': function(e) {
         e.preventDefault();
-        BuildSessions.update({_id: e.target.id}, {$pull: {attend: Meteor.userId()}});
+
+        //convert the startime to 24 hour time, make a duration out of that, add it to the start date.
+        var eventstart = moment(this.date.date).add(moment.duration(moment(this.starttime, ["h:mm A"]).format("HH:mm")));
+
+
+        if(eventstart.diff(moment(), 'hours')<this.locktime) {//if it is too late
+            BuildSessions.update({_id: e.target.id}, {$addToSet: {absent: Meteor.userId()}});
+        } else {
+            BuildSessions.update({_id: e.target.id}, {$pull: {attend: Meteor.userId()}});
+        }
       },
 
     'click .coming': function (e) {

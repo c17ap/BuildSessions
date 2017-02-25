@@ -24,6 +24,7 @@ Meteor.methods({
             date: e.date,
             starttime: e.starttime,
             endtime: e.endtime,
+            locktime: e.locktime,
             createdBy: loggedInUser,
             attend: []
         };

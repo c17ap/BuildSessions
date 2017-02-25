@@ -8,7 +8,8 @@ Template.addSession.events({
         Meteor.call('addSession', {
             date: $('#datepicker').data(),
             starttime: $('#starttimepicker').data().date,
-            endtime: $('#endtimepicker').data().date
+            endtime: $('#endtimepicker').data().date,
+            locktime: $('#locktime').val()
         }, (err, res) => {
             if (err) {
                 alert(err);
