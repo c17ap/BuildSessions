@@ -7,7 +7,7 @@ Template.attendReport.helpers({
             transform: function (doc) {
                 doc.sessions = [];
                 BuildSessions.find({attend: doc._id}).forEach(function(s) {
-                    doc.sessions.push(moment(s.date.date).format('dddd'));
+                    doc.sessions.push(moment(s.start._d).format('dddd'));
                 });
                 doc.count = doc.sessions.length;
                 return doc;

@@ -8,17 +8,18 @@ var thisuseriscoming = function (sessionid) {
 
 Template.buildSessionList.helpers({
     buildSession: function() {
-        return BuildSessions.find({}, {sort: { date : 1 } });
+        return BuildSessions.find(
+            {end: {$gte: moment().toDate()}},
+            {sort: { start : 1 } });
     },
     isAdmin: function() {
         return Roles.userIsInRole(Meteor.userId(), ['admin']);
     },
-    dateMoment: function(date, st) {
-        console.log(st);
-        return moment(date.date).add(moment.duration(st)).format('ddd M/D @ h:mm');
+    dateMoment: function(start) {
+        return moment(start).format('dddd M/D @ h:mm');
     },
-    durationMoment: function(st, et) {
-        return moment.duration(et).subtract(moment.duration(st)).humanize();
+    durationMoment: function(start, end) {
+        return moment(end).to(moment(start), true);
     },
     comingnotcoming: function(sessionid){
         return thisuseriscoming(sessionid)?'not-coming':'coming';
@@ -52,8 +53,6 @@ Template.buildSessionList.helpers({
 });
 
 Template.buildSessionList.events({
- //    if(session.attend.includes(e.target.Id) e.gettext == add){
- //  //  if(check(session.attend), Meteor.userId == true){
 
     //if you click on a person
     'click li': function() {
@@ -66,10 +65,10 @@ Template.buildSessionList.events({
         e.preventDefault();
 
         //convert the startime to 24 hour time, make a duration out of that, add it to the start date.
-        var eventstart = moment(this.date.date).add(moment.duration(moment(this.starttime, ["h:mm A"]).format("HH:mm")));
+        // var eventstart = moment(this.date.date).add(moment.duration(moment(this.starttime, ["h:mm A"]).format("HH:mm")));
 
 
-        if(eventstart.diff(moment(), 'hours')<this.locktime) {//if it is too late
+        if(moment(this.start).diff(moment(), 'hours')<this.locktime) {//if it is too late
             BuildSessions.update({_id: e.target.id}, {$addToSet: {absent: Meteor.userId()}});
         } else {
             BuildSessions.update({_id: e.target.id}, {$pull: {attend: Meteor.userId()}});
@@ -78,7 +77,6 @@ Template.buildSessionList.events({
 
     'click .coming': function (e) {
         e.preventDefault();
-      //  n = BuildSessions.findOne(e.target.id);
         BuildSessions.update({_id: e.target.id}, {$push: {attend: Meteor.userId()}});
     },
     'click .delete': function(e) {
@@ -105,7 +103,6 @@ Template.buildSessionList.events({
                         // success!
                     }
                 });
-                // BuildSessions.remove(sessionId);
             }
         });
     }

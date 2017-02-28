@@ -6,7 +6,7 @@ Template.addSession.events({
         e.preventDefault();
 
         Meteor.call('addSession', {
-            date: $('#datepicker').data(),
+            date: $('#datepicker').data().date,
             starttime: $('#starttimepicker').data().date,
             endtime: $('#endtimepicker').data().date,
             locktime: $('#locktime').val()

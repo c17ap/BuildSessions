@@ -7,14 +7,14 @@
                 <td class="buildSession-date col-xs-3">
 
                     <div class="h4">
-                        {{dateMoment date starttime}}
+                        {{dateMoment start}}
                         {{#if isAdmin}}
                             <a class="btn-xs delete" href="#"><span class="glyphicon glyphicon-remove"></span></a>
                         {{/if}}
 
                         <br />
                         <small>
-                            {{durationMoment starttime endtime}}
+                            {{durationMoment start end}}
                         </small>
                     </div>
                 </td>

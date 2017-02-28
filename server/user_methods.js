@@ -19,11 +19,16 @@ Meteor.methods({
             throw new Meteor.Error(403, "Access denied")
         }
 
+        var start = moment(e.date).add(
+            moment.duration(moment(e.starttime, ["h:mm A"]).format("HH:mm")));
+
+        var end = moment(e.date).add(
+            moment.duration(moment(e.endtime, ["h:mm A"]).format("HH:mm")));
+
         //make a build session object:
         var session = {
-            date: e.date,
-            starttime: e.starttime,
-            endtime: e.endtime,
+            start: start._d,
+            end: end._d,
             locktime: e.locktime,
             createdBy: loggedInUser,
             attend: []
