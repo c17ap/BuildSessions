@@ -30,7 +30,7 @@ Meteor.methods({
             start: start._d,
             end: end._d,
             locktime: e.locktime,
-            createdBy: loggedInUser,
+            createdBy: Meteor.userId(),
             attend: []
         };
 
