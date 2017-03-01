@@ -49,6 +49,11 @@ Template.buildSessionList.helpers({
             _id: {$in: users},
             profile: {team: teamid}
         }).count()> 0;
+    },
+    lockMoment: function() {
+        l = moment(this.start).subtract(this.locktime, 'hours')
+        if(l.isBefore(moment())) return "attendance locked"
+        else return "locked " + l.fromNow();
     }
 });
 
@@ -67,11 +72,10 @@ Template.buildSessionList.events({
         //convert the startime to 24 hour time, make a duration out of that, add it to the start date.
         // var eventstart = moment(this.date.date).add(moment.duration(moment(this.starttime, ["h:mm A"]).format("HH:mm")));
 
-
         if(moment(this.start).diff(moment(), 'hours')<this.locktime) {//if it is too late
-            BuildSessions.update({_id: e.target.id}, {$addToSet: {absent: Meteor.userId()}});
+            BuildSessions.update({_id: this._id}, {$addToSet: {absent: Meteor.userId()}});
         } else {
-            BuildSessions.update({_id: e.target.id}, {$pull: {attend: Meteor.userId()}});
+            BuildSessions.update({_id: this._id}, {$pull: {attend: Meteor.userId()}});
         }
       },
 
