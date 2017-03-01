@@ -1,7 +1,0 @@
-{
-  "galaxy.meteor.com": {
-    "env": {
-      "MONGO_URL": "mongodb://user:muddygoose76@ds163699.mlab.com:63699/buildsession"
-    }
-  }
-}
