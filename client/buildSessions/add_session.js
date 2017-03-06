@@ -1,17 +1,14 @@
 /**
  * Created by aryavpal on 1/19/17.
  */
+
 Template.addSession.events({
     'submit form': function(e) {
         e.preventDefault();
 
-        var startms = moment.duration(moment($('#starttimepicker').data().date, ["h:mm A Z"]).format("HH:mm"))
-        var endms = moment.duration(moment($('#endtimepicker').data().date, ["h:mm A Z"]).format("HH:mm"));
-
         Meteor.call('addSession', {
-            date: $('#datepicker').data().date,
-            starttime: startms._milliseconds,
-            endtime: endms._milliseconds,
+            starttime: starttime.toDate(),
+            endtime: endtime.toDate(),
             locktime: $('#locktime').val()
         }, (err, res) => {
             if (err) {
@@ -26,6 +23,8 @@ Template.addSession.events({
 });
 
 Template.addSession.onRendered(function() {
+    starttime = moment().hours(15).minutes(30).seconds(0);
+    endtime = moment().hours(19).minutes(0).seconds(0);
     this.$('#datepicker').datetimepicker({
         format: 'LL',
         allowInputToggle: true,
@@ -36,13 +35,23 @@ Template.addSession.onRendered(function() {
         format: 'LT',
         allowInputToggle: true,
         inline: true,
-        defaultDate: moment().hours(15).minutes(30).seconds(0)
+        defaultDate: starttime
     });
     this.$('#endtimepicker').datetimepicker({
         format: 'LT',
         allowInputToggle: true,
         inline: true,
-        defaultDate: moment().hours(19).minutes(0).seconds(0)
+        defaultDate: endtime
+    });
+    this.$("#starttimepicker").on("dp.change", function (e) {
+        starttime.hours(e.date.hours()).minutes(e.date.minutes());
+    });
+    this.$("#endtimepicker").on("dp.change", function (e) {
+        endtime.hours(e.date.hours()).minutes(e.date.minutes());
+    });
+    this.$("#datepicker").on("dp.change", function (e) {
+        starttime.month(e.date.month()).date(e.date.date()).year(e.date.year());
+        endtime.month(e.date.month()).date(e.date.date()).year(e.date.year());
     });
 
 });
