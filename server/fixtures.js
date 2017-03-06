@@ -6,7 +6,8 @@ if ( Meteor.users.find().count() === 0 ) {
     var id = Accounts.createUser({
         username: 'admin',
         email: 'admin@admin.com',
-        password: 'password'
+        password: 'password',
+        profile: {team: '0'}
     });
 
     Roles.addUsersToRoles(id, ['admin']);
