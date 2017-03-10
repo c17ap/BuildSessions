@@ -23,8 +23,17 @@
                 </td>
                 {{#if currentUser}}
                     <td class="buildSession-enroll col-xs-2 middlealign" >
-                        <button class="btn btn-default {{comingnotcoming _id}}" id="{{_id}}">{{comingnotcoming _id}}</button>
-                    </td>
+                      <div class="btn-group-vertical" role="group">
+                        {{#if iscoming _id}}
+                          <button class="btn btn-sm btn-primary coming" id="{{_id}}">Coming</button>
+                          <button class="btn btn-sm btn-default not-coming" id="{{_id}}">Not Coming</button>
+                        {{else}}
+                          <button class="btn btn-sm btn-default coming" id="{{_id}}">Coming</button>
+                          <button class="btn btn-sm btn-primary not-coming" id="{{_id}}">Not Coming</button>
+                        {{/if}}
+                      </div>
+
+                        </td>
                 {{/if}}
                 <td class="buildSession-attendance col-md-9">
 

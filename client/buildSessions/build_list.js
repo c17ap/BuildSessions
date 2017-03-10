@@ -24,6 +24,9 @@ Template.buildSessionList.helpers({
     comingnotcoming: function(sessionid){
         return thisuseriscoming(sessionid)?'not-coming':'coming';
     },
+    iscoming: function(sessionid) {
+        return thisuseriscoming(sessionid);
+    },
     success: function(sessionid) {
         return thisuseriscoming(sessionid)?'success':'';
     },
