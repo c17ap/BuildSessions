@@ -62,12 +62,6 @@ Meteor.methods({
             Roles.removeUsersFromRoles(e.targetUserId, ['admin']);
         }
     },
-    getUserName: function (e) {
-        return Meteor.users.findOne({_id: e.id}).username;
-    },
-    getTeam: function(e) {
-       return Meteor.users.findOne({_id: e.id}).username;
-    },
     attendBuild: function(e) {
         BuildSessions.update({_id: e}, {$addtoset: {attend: Meteor.userId()}});
     },
