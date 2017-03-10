@@ -61,6 +61,20 @@ Meteor.methods({
         } else {
             Roles.removeUsersFromRoles(e.targetUserId, ['admin']);
         }
+    },
+    getUserName: function (e) {
+        return Meteor.users.findOne({_id: e.id}).username;
+    },
+    getTeam: function(e) {
+       return Meteor.users.findOne({_id: e.id}).username;
+    },
+    attendBuild: function(e) {
+        BuildSessions.update({_id: e}, {$addtoset: {attend: Meteor.userId()}});
+    },
+    removeAttend: function(e) {
+        BuildSessions.update({_id: e}, {$pull: {attend: Meteor.userId()}});
+    },
+    setTardy: function(e) {
+        BuildSessions.update({_id: e}, {$addToSet: {absent: Meteor.userId()}});
     }
-
 });
