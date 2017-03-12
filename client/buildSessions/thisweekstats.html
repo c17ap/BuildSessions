@@ -10,6 +10,13 @@
                     {{/each}}
                 </ul>
         {{/each}}
+        <br/>
+        Hours worked this week:
+        <ul class="comma-list">
+        {{#each teams}}
+            <li><b> {{value}}</b>: {{totalHours value}}</li>
+        {{/each}}
+        </ul>
     </jumbotron>
 </template>
 

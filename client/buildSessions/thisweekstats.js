@@ -9,5 +9,10 @@ Template.thisweekstats.helpers({
     },
     teams: function() {
         return Teams;
+    },
+    totalHours: function(teamid) {
+        let teamhours = hoursReportTeam.findOne({_id: teamid});
+        if(teamhours) return moment.duration(teamhours.totaltime).hours();
+        else return "0";
     }
 });
