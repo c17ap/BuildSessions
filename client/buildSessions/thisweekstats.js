@@ -2,20 +2,12 @@
  * Created by charlie on 3/2/17.
  */
 Template.thisweekstats.helpers({
-    notusers: function () {
-        let WEEKSTART = moment().startOf('isoWeek').toDate();
-        let WEEKEND = moment().endOf('isoWeek').toDate();
-
-        return Meteor.users.find({}, {
-            transform: function (doc) {
-                if(typeof BuildSessions.findOne({
-                        attend: doc._id,
-                        start: {$gte: WEEKSTART, $lte: WEEKEND}
-                    }) != 'undefined') doc.attendthisweek=true;
-                else doc.attendthisweek=false;
-                return doc;
-            }
-        });
-
+    notusers: function (teamid) {
+        return Meteor.users.find(
+            {_id: {$nin: attendReportWeekly.findOne({_id: moment().week()}).attending},
+                profile: {team: teamid}});
+    },
+    teams: function() {
+        return Teams;
     }
 });

@@ -1,13 +1,16 @@
 <template name="thisweekstats">
-</template>
 
-    <!--<jumbotron>-->
-        <!--Not attending this week:-->
-        <!--<ul class="comma-list">-->
-           <!--{{#each notusers}}-->
-            <!--{{#unless attendthisweek}} <li>{{username}}</li> {{/unless}}-->
-            <!--{{/each}}-->
-        <!--</ul>-->
-    <!--</jumbotron>-->
+    <jumbotron>
+        Not attending this week:
+        {{#each teams}}
+            <b>{{value}}</b>:
+                <ul class="comma-list">
+                    {{#each notusers value}}
+                           <li>{{username}}</li>
+                    {{/each}}
+                </ul>
+        {{/each}}
+    </jumbotron>
+</template>
 
 
