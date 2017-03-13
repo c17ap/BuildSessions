@@ -63,7 +63,7 @@ Meteor.methods({
         }
     },
     attendBuild: function(e) {
-        BuildSessions.update({_id: e}, {$addtoset: {attend: Meteor.userId()}});
+        BuildSessions.update({_id: e}, {$addToSet: {attend: Meteor.userId()}});
     },
     removeAttend: function(e) {
         BuildSessions.update({_id: e}, {$pull: {attend: Meteor.userId()}});
