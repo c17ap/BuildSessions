@@ -74,12 +74,7 @@ Template.buildSessionList.events({
 
         //convert the startime to 24 hour time, make a duration out of that, add it to the start date.
         // var eventstart = moment(this.date.date).add(moment.duration(moment(this.starttime, ["h:mm A"]).format("HH:mm")));
-
-        if(moment(this.start).diff(moment(), 'hours')<this.locktime) {//if it is too late
-            Meteor.call('setTardy', this._id);
-        } else {
-            Meteor.call('removeAttend', this._id);
-        }
+        Meteor.call('removeAttend', this._id);
       },
 
     'click .coming': function (e) {
