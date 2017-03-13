@@ -70,5 +70,19 @@ Meteor.methods({
     },
     setTardy: function(e) {
         BuildSessions.update({_id: e}, {$addToSet: {absent: Meteor.userId()}});
+    },
+    adminTardy: function(e) {
+        var loggedInUser = Meteor.user();
+        if (!loggedInUser || !Roles.userIsInRole(loggedInUser, ['admin'])) {
+            throw new Meteor.Error(403, "Access denied");
+        }
+        BuildSessions.update({_id: e.sessionId}, {$addToSet: {absent: e.userId}});
+    },
+    adminNotTardy: function(e) {
+        var loggedInUser = Meteor.user();
+        if (!loggedInUser || !Roles.userIsInRole(loggedInUser, ['admin'])) {
+            throw new Meteor.Error(403, "Access denied");
+        }
+        BuildSessions.update({_id: e.sessionId}, {$pull: {absent: e.userId}});
     }
 });
