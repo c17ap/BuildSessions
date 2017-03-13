@@ -66,10 +66,13 @@ Meteor.methods({
         BuildSessions.update({_id: e}, {$addToSet: {attend: Meteor.userId()}});
     },
     removeAttend: function(e) {
-        BuildSessions.update({_id: e}, {$pull: {attend: Meteor.userId()}});
-    },
-    setTardy: function(e) {
-        BuildSessions.update({_id: e}, {$addToSet: {absent: Meteor.userId()}});
+        var session = BuildSessions.findOne({_id: e});
+        if(moment(session.start).diff(moment(), 'hours')<session.locktime) {//if it is too late
+            BuildSessions.update({_id: e}, {$addToSet: {absent: Meteor.userId()}});
+        } else {
+            BuildSessions.update({_id: e}, {$pull: {attend: Meteor.userId()}});
+        }
+        
     },
     adminTardy: function(e) {
         var loggedInUser = Meteor.user();
