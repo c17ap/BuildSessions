@@ -65,8 +65,8 @@ Template.buildSessionList.events({
     //if you click on a person
     'click li': function() {
         if(Roles.userIsInRole(Meteor.userId(), ['admin'])) {
-            if(this.isAbsent) BuildSessions.update({_id: this.sessionid}, {$pull: {absent: this._id}});
-            else BuildSessions.update({_id: this.sessionid}, {$addToSet: {absent: this._id}});
+            if(this.isAbsent) Meteor.call('adminNotTardy', {sessionId: this.sessionid, userId: this._id});
+            else Meteor.call('adminTardy', {sessionId: this.sessionid, userId: this._id});
         }
     },
     'click .not-coming': function(e) {
