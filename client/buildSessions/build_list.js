@@ -76,15 +76,15 @@ Template.buildSessionList.events({
         // var eventstart = moment(this.date.date).add(moment.duration(moment(this.starttime, ["h:mm A"]).format("HH:mm")));
 
         if(moment(this.start).diff(moment(), 'hours')<this.locktime) {//if it is too late
-            BuildSessions.update({_id: this._id}, {$addToSet: {absent: Meteor.userId()}});
+            Meteor.call('setTardy', this._id);
         } else {
-            BuildSessions.update({_id: this._id}, {$pull: {attend: Meteor.userId()}});
+            Meteor.call('removeAttend', this._id);
         }
       },
 
     'click .coming': function (e) {
         e.preventDefault();
-        BuildSessions.update({_id: e.target.id}, {$push: {attend: Meteor.userId()}});
+        Meteor.call('attendBuild', this._id);
     },
     'click .delete': function(e) {
         e.preventDefault();
