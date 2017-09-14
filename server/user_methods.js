@@ -25,7 +25,8 @@ Meteor.methods({
             end: e.endtime,
             locktime: e.locktime,
             createdBy: Meteor.userId(),
-            attend: []
+            attend: [],
+            purpose: []
         };
 
         BuildSessions.insert(session);

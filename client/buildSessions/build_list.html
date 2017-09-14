@@ -1,6 +1,5 @@
 <template name="buildSessionList">
     <div class="buildSession container-fluid">
-        {{> thisweekstats}}
 
         <table class="table table-hover">
         <tbody>
@@ -38,7 +37,7 @@
                 <td class="buildSession-attendance col-md-9">
 
                     {{#each team}}
-                        {{#if anybodycoming ../attend value}}
+                        {{#if anybodycoming .. value}}
                            {{value}}:
                             <ul class="comma-list">
                                 {{#each queryuser ../attend value ../_id}}
@@ -49,6 +48,15 @@
                                     </li>
                                 {{/each}}
                             </ul>
+                            (working on
+                                <a href="#" class="purpose" id="{{../_id}}-{{value}}" data-type="text"
+                                           data-pk="1" data-url="/post"
+                                           data-value="{{purpose ../_id value}}"
+                                           data-title="working on ">
+
+                                </a>
+                            )
+
                             <br />
                         {{/if}}
                    {{/each}}

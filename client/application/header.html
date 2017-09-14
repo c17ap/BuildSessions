@@ -27,6 +27,11 @@
                 </li>
             </ul>
             {{/if}}
+            {{#if currentUser}}
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{pathFor 'profile'}}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
+            </ul>
+            {{/if}}
             <ul class="nav navbar-nav navbar-right">
                 {{>atNavButton}}
             </ul>

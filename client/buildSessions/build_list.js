@@ -30,6 +30,15 @@ Template.buildSessionList.helpers({
     success: function(sessionid) {
         return thisuseriscoming(sessionid)?'success':'';
     },
+    purpose: function(sessionid, teamid) {
+        p = BuildSessions.findOne({_id: sessionid, 'purpose.teamid': teamid});
+        if(p) {
+            return p.purpose.find(o => o.teamid==='4174').value;
+        }
+        else {
+            return '...';
+        }
+    },
     team: function() {
         return Teams;
     },
@@ -47,9 +56,12 @@ Template.buildSessionList.helpers({
             }
         );
     },
-    anybodycoming: function(users, teamid) {
+    anybodycoming: function(session, teamid) {
+        editpurpose()
+
+        //give all the users attending
         return Meteor.users.find({
-            _id: {$in: users},
+            _id: {$in: session.attend},
             profile: {team: teamid}
         }).count()> 0;
     },
@@ -59,6 +71,25 @@ Template.buildSessionList.helpers({
         else return "locked " + l.fromNow();
     }
 });
+
+//set up the editable purpose:
+function editpurpose() {
+    $('.purpose').editable({
+        success: function (response, newValue) {
+            sid = this.id.split('-')[0];
+            tid = this.id.split('-')[1];
+
+            console.log(tid);
+            BuildSessions.update({'_id': sid}, {$pull: {'purpose': {'teamid': tid}}});
+            BuildSessions.update({'_id': sid}, {$push: {'purpose': {'teamid': tid, 'value': newValue}}});
+        }
+    });
+}
+
+Template.buildSessionList.rendered = function () {
+    $.fn.editable.defaults.mode = 'inline';
+    editpurpose()
+};
 
 Template.buildSessionList.events({
 
@@ -84,7 +115,7 @@ Template.buildSessionList.events({
 
     'click .coming': function (e) {
         e.preventDefault();
-        BuildSessions.update({_id: e.target.id}, {$push: {attend: Meteor.userId()}});
+        BuildSessions.update({_id: e.target.id}, {$addToSet: {attend: Meteor.userId()}});
     },
     'click .delete': function(e) {
         e.preventDefault();
