@@ -5,8 +5,11 @@
 
 Template.attendReport.helpers({
     usersAttend: function () {
-        Session.get('start'); //trigger react
-        Session.get('end'); //trigger react
+        //initialize:
+        if(typeof Session.get('start') === 'undefined') {
+            Session.set('start', moment().startOf('week').add(1, 'days')._d);
+            Session.set('end', moment().hour(23)._d);
+        }
         return Meteor.users.find({}, {
             transform: function (doc) {
                 doc.sessions = [];
@@ -26,11 +29,7 @@ Template.attendReport.helpers({
     }
 });
 
-Template.attendReport.rendered = function () {
-
-    //this week:
-    Session.set('start', moment().startOf('week').add(1, 'days')._d);
-    Session.set('end', moment()._d);
+Template.attendReport.onRendered (function () {
 
     function cb(start, end) {
         $('#reportrange span').html(moment(start).format('MMMM D, YYYY') + ' - ' + moment(end).format('MMMM D, YYYY'));
@@ -38,7 +37,7 @@ Template.attendReport.rendered = function () {
         Session.set('end', end._d);
     }
 
-    var school_year_start = moment().month('september').date(1);
+    let school_year_start = moment().month('september').date(1);
     if(school_year_start.isAfter(moment())) school_year_start.subtract(1,'year');
 
     $('#reportrange').daterangepicker({
@@ -46,7 +45,7 @@ Template.attendReport.rendered = function () {
         endDate: moment(Session.get('end')),
         ranges: {
             'This week': [moment().startOf('week').add(1, 'days'), moment()],
-            'Last week': [moment().startOf('week').subtract(6, 'days'), moment().startOf('week')],
+            'Last week': [moment().startOf('week').subtract(6, 'days'), moment().startOf('week').hour(23)],
             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
             'This school year': [school_year_start, moment()]
         }
@@ -55,4 +54,5 @@ Template.attendReport.rendered = function () {
 
     cb(Session.get('start'), Session.get('end'));
 
-};
+
+});
