@@ -18,7 +18,7 @@ Template.attendReport.helpers({
                 doc.count = doc.sessions.length;
                 return doc;
             },
-            sort: {count: 1}
+            sort: {username: 1}
         });
     },
     noattend: function(count) {
