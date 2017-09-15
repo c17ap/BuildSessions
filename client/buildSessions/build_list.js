@@ -33,7 +33,7 @@ Template.buildSessionList.helpers({
     purpose: function(sessionid, teamid) {
         p = BuildSessions.findOne({_id: sessionid, 'purpose.teamid': teamid});
         if(p) {
-            return p.purpose.find(o => o.teamid==='4174').value;
+            return p.purpose.find(o => o.teamid===teamid).value;
         }
         else {
             return '...';
@@ -79,7 +79,6 @@ function editpurpose() {
             sid = this.id.split('-')[0];
             tid = this.id.split('-')[1];
 
-            console.log(tid);
             BuildSessions.update({'_id': sid}, {$pull: {'purpose': {'teamid': tid}}});
             BuildSessions.update({'_id': sid}, {$push: {'purpose': {'teamid': tid, 'value': newValue}}});
         }
