@@ -39,6 +39,9 @@ Template.buildSessionList.helpers({
             return '...';
         }
     },
+    purposeEnabled: function() {
+        return Meteor.userId()?"false":"true";
+    },
     team: function() {
         return Teams;
     },
@@ -79,11 +82,31 @@ function editpurpose() {
             sid = this.id.split('-')[0];
             tid = this.id.split('-')[1];
 
-            BuildSessions.update({'_id': sid}, {$pull: {'purpose': {'teamid': tid}}});
-            BuildSessions.update({'_id': sid}, {$push: {'purpose': {'teamid': tid, 'value': newValue}}});
+            if (Meteor.userId()) {
+                BuildSessions.update({'_id': sid}, {$pull: {'purpose': {'teamid': tid}}});
+                BuildSessions.update({'_id': sid}, {$push: {'purpose': {'teamid': tid, 'value': newValue}}});
+            }
         }
     });
 }
+    // Deps.autorun(function () {
+    //     if(!Meteor.userId())
+    //     {
+    //         $('.purpose').editable({
+    //             disabled: true
+    //         });
+    //         console.log('disabled');
+    //     }
+    //     else {
+    //         $('.purpose').editable({
+    //             disabled: false
+    //         });
+    //     }
+    // });
+
+
+
+
 
 Template.buildSessionList.rendered = function () {
     $.fn.editable.defaults.mode = 'inline';
