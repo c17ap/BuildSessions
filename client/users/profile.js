@@ -1,3 +1,14 @@
+Template.profile.helpers({
+    attends: function () {
+        return BuildSessions.find({attend: Meteor.userId()},
+            { transform: function (doc) {
+                doc.attend = moment(doc.start).format('MM/DD');
+                return doc;
+            }
+            });
+    }
+});
+
 Template.profile.rendered = function () {
     $.fn.editable.defaults.mode = 'inline';
 

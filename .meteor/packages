@@ -37,3 +37,5 @@ meteorhacks:aggregate
 jcbernack:reactive-aggregate
 dynamic-import
 natestrauser:x-editable-bootstrap
+dangrossman:bootstrap-daterangepicker
+session
