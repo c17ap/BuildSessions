@@ -31,8 +31,21 @@
                           <button class="btn btn-sm btn-primary not-coming" id="{{_id}}">Not Coming</button>
                         {{/if}}
                       </div>
+                    </td>
+                {{#if food _id}}
+                    <td class="col-xs-2 middlealign">
+                        <div class="btn-group-vertical" role="group">
+                            {{#if iseating _id}}
+                                <button class="btn btn-sm btn-primary eating" id="{{_id}}">Eating</button>
+                                <button class="btn btn-sm btn-default not-eating" id="{{_id}}">Not Eatig</button>
+                            {{else}}
+                                <button class="btn btn-sm btn-default eating" id="{{_id}}">Eating</button>
+                                <button class="btn btn-sm btn-primary not-eating" id="{{_id}}">Not Eating</button>
+                            {{/if}}
+                        </div>
+                    </td>
+                {{/if}}
 
-                        </td>
                 {{/if}}
                 <td class="buildSession-attendance col-md-9">
 
@@ -49,7 +62,7 @@
                                 {{/each}}
                             </ul>
                             (working on
-                                <a href="#" class="purpose" id="{{../_id}}-{{value}}" data-type="text"
+                                <a href="#" class="purpose {{purposeDisabledStyle}}" id="{{../_id}}-{{value}}" data-type="text"
                                            data-pk="1" data-url="/post"
                                            data-disabled="{{purposeEnabled}}"
                                            data-title="working on ">
@@ -60,6 +73,18 @@
                             <br />
                         {{/if}}
                    {{/each}}
+                    {{#if food _id}}
+                        food: <ul class="comma-list">
+
+                        <!--WORKING: need to pass user list of food eaters-->
+                        {{#each eating .}}
+                            <li class="small">
+                                {{username}}
+                            </li>
+                        {{/each}}
+
+                         </ul>
+                    {{/if}}
                 </td>
             </tr>
         {{/each}}

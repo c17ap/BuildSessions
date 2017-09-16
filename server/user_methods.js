@@ -26,8 +26,10 @@ Meteor.methods({
             locktime: e.locktime,
             createdBy: Meteor.userId(),
             attend: [],
+            hasFood: e.food,
             purpose: []
         };
+        if(e.food)  session['food'] = [];
 
         BuildSessions.insert(session);
     },

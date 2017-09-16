@@ -22,6 +22,12 @@ Template.buildSessionList.helpers({
     durationMoment: function(start, end) {
         return moment(end).to(moment(start), true);
     },
+    food: function(sessionid) {
+        return BuildSessions.findOne(sessionid).hasFood;
+    },
+    iseating: function(sessionid) {
+        return _.contains(BuildSessions.findOne({_id: sessionid}).food, Meteor.userId());;
+    },
     comingnotcoming: function(sessionid){
         return thisuseriscoming(sessionid)?'not-coming':'coming';
     },
@@ -42,6 +48,9 @@ Template.buildSessionList.helpers({
     },
     purposeEnabled: function() {
         return Meteor.userId()?"false":"true";
+    },
+    purposeDisabledStyle: function() {
+        return Meteor.userId()?"":"editable-disabled";
     },
     team: function() {
         return Teams;
@@ -68,6 +77,11 @@ Template.buildSessionList.helpers({
             _id: {$in: session.attend},
             profile: {team: teamid}
         }).count()> 0;
+    },
+    eating: function(session) {
+        return Meteor.users.find({
+            _id: {$in: session.food}
+        });
     },
     lockMoment: function() {
         l = moment(this.start).subtract(this.locktime, 'hours')
@@ -143,6 +157,14 @@ Template.buildSessionList.events({
     'click .coming': function (e) {
         e.preventDefault();
         BuildSessions.update({_id: e.target.id}, {$addToSet: {attend: Meteor.userId()}});
+    },
+    'click .eating': function (e) {
+        e.preventDefault();
+        BuildSessions.update({_id: e.target.id}, {$addToSet: {food: Meteor.userId()}});
+    },
+    'click .not-eating': function(e) {
+        e.preventDefault();
+        BuildSessions.update({_id: this._id}, {$pull: {food: Meteor.userId()}});
     },
     'click .delete': function(e) {
         e.preventDefault();
