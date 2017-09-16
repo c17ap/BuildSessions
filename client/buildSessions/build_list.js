@@ -6,6 +6,7 @@ var thisuseriscoming = function (sessionid) {
     return _.contains(BuildSessions.findOne({_id: sessionid}).attend, Meteor.userId());
 };
 
+
 Template.buildSessionList.helpers({
     buildSession: function() {
         return BuildSessions.find(
@@ -78,6 +79,9 @@ Template.buildSessionList.helpers({
 //set up the editable purpose:
 function editpurpose() {
     $('.purpose').editable({
+        display: function(value, sourceData) {
+            //the existence of this function avoids a duplicating bug in x-editable
+        },
         success: function (response, newValue) {
             sid = this.id.split('-')[0];
             tid = this.id.split('-')[1];
@@ -85,6 +89,7 @@ function editpurpose() {
             if (Meteor.userId()) {
                 BuildSessions.update({'_id': sid}, {$pull: {'purpose': {'teamid': tid}}});
                 BuildSessions.update({'_id': sid}, {$push: {'purpose': {'teamid': tid, 'value': newValue}}});
+                $(this).editable('setValue', newValue);
             }
         }
     });
