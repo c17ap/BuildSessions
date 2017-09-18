@@ -12,3 +12,4 @@ if ( Meteor.users.find().count() === 0 ) {
 
     Roles.addUsersToRoles(id, ['admin']);
 }
+

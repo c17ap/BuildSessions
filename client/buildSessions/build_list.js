@@ -64,7 +64,8 @@ Template.buildSessionList.helpers({
                     doc.isAbsent = BuildSessions.find({_id: sessionid, absent: doc._id}).count()>0
                     doc.absent = doc.isAbsent?"absent":"";
                     doc.sessionid = sessionid;
-                    return doc;
+                    if(!Meteor.userId()) doc.username = doc.username.replace(/[\w-]/g, 'x'); //anon if not logged in
+                return doc;
                 }
             }
         );
@@ -81,7 +82,11 @@ Template.buildSessionList.helpers({
     eating: function(session) {
         return Meteor.users.find({
             _id: {$in: session.food}
-        });
+        }, {
+            transform: function (doc) {
+                if(!Meteor.userId()) doc.username = doc.username.replace(/[\w-]/g, 'x'); //anon if not logged in
+                return doc;
+            }});
     },
     lockMoment: function() {
         l = moment(this.start).subtract(this.locktime, 'hours')

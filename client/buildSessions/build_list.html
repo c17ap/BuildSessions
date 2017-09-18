@@ -31,9 +31,7 @@
                           <button class="btn btn-sm btn-primary not-coming" id="{{_id}}">Not Coming</button>
                         {{/if}}
                       </div>
-                    </td>
-                {{#if food _id}}
-                    <td class="col-xs-2 middlealign">
+                    {{#if food _id}}
                         <div class="btn-group-vertical" role="group">
                             {{#if iseating _id}}
                                 <button class="btn btn-sm btn-primary eating" id="{{_id}}">Eating</button>
@@ -43,8 +41,8 @@
                                 <button class="btn btn-sm btn-primary not-eating" id="{{_id}}">Not Eating</button>
                             {{/if}}
                         </div>
-                    </td>
-                {{/if}}
+                    {{/if}}
+                </td>
 
                 {{/if}}
                 <td class="buildSession-attendance col-md-9">

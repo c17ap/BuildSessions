@@ -21,10 +21,14 @@ Template.profile.rendered = function () {
     }
 
     $('#select').editable({
-        value: source.find(o=>o.value===Meteor.user().profile.team).value,
+        emptytext: 'No Team Assigned',
+        value: Meteor.user().profile.team, //source.find(o=>o.value===Meteor.user().profile.team).value,
         source: source,
         success: function (response, newValue) {
             Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.team": newValue}});
         }
     });
+
+
+
 };

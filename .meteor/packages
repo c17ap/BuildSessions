@@ -29,7 +29,7 @@ tsega:bootstrap3-datetimepicker
 sacha:spin
 alanning:roles
 useraccounts:bootstrap
-service-configuration@1.0.11
+service-configuration
 momentjs:moment
 useraccounts:iron-routing
 matdutour:popup-confirm
@@ -39,3 +39,4 @@ dynamic-import
 natestrauser:x-editable-bootstrap
 dangrossman:bootstrap-daterangepicker
 session
+accounts-google

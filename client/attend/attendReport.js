@@ -13,9 +13,14 @@ Template.attendReport.helpers({
         return Meteor.users.find({}, {
             transform: function (doc) {
                 doc.sessions = [];
-                BuildSessions.find({'start': {$gte: Session.get('start'),
-                                             $lte: Session.get('end')},
-                                    attend: doc._id}).forEach(function(s) {
+                BuildSessions.find({
+                    'start': {
+                        $gte: Session.get('start'),
+                        $lte: Session.get('end')
+                    },
+                    attend: doc._id,
+                    absent: {$nin: [doc._id]}
+                }).forEach(function(s) {
                     doc.sessions.push(moment(s.start).format('MM/DD'));
                 });
                 doc.count = doc.sessions.length;
