@@ -14,7 +14,8 @@ Meteor.publishTransformed(null, function() {
     let cursor = Meteor.users.find({}, {
         fields: {
             username: 1,
-            profile: 1
+            profile: 1,
+            roles: 1
         }
     });
 
