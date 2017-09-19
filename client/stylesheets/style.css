@@ -23,3 +23,6 @@
 /* Here's the interesting part: */
 .comma-list li:after { content: ", " }
 .comma-list li:last-child:after { content: "" }
+.at-signup-link {
+    display: none;
+}
