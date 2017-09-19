@@ -8,6 +8,24 @@ Meteor.publish('buildSessions', function(){
 Meteor.publish(null, function (){
     return Meteor.roles.find();
 });
-Meteor.publish(null, function() {
-    return Meteor.users.find();
+
+
+Meteor.publishTransformed(null, function() {
+    let cursor = Meteor.users.find({}, {
+        fields: {
+            username: 1,
+            profile: 1
+        }
+    });
+
+    //if logged in, make the username x-ed out
+    if(!this.userId) {
+        cursor.serverTransform(function(doc) {
+            doc.username = doc.username.replace(/[\w-]/g, 'x');
+            return doc;
+        });
+    }
+    return cursor;
+
 });
+
