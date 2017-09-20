@@ -109,8 +109,18 @@ function editpurpose() {
             tid = this.id.split('-')[1];
 
             if (Meteor.userId()) {
-                BuildSessions.update({'_id': sid}, {$pull: {'purpose': {'teamid': tid}}});
-                BuildSessions.update({'_id': sid}, {$push: {'purpose': {'teamid': tid, 'value': newValue}}});
+                Meteor.call('updatePurpose', {
+                    sessionid: sid,
+                    teamid: tid,
+                    purpose: newValue
+                }, (err, res) => {
+                    if (err) {
+                        alert(err);
+                    } else {
+                        // success!
+                    }
+                });
+
                 $(this).editable('setValue', newValue);
             }
         }

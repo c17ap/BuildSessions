@@ -3,7 +3,7 @@
  */
 Template.usersList.helpers({
     user: function() {
-        return Meteor.users.find({}, {sort: {'profile.team': -1}}); //{_id: {$ne: Meteor.user()._id}}
+        return Meteor.users.find({}, {sort: {'profile.team': -1, 'username': 1}}); //{_id: {$ne: Meteor.user()._id}}
     },
     isAdmin: function(user) {
         return Roles.userIsInRole(user, ['admin']);

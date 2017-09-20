@@ -85,6 +85,24 @@ Meteor.methods({
         } else {
             Meteor.users.update({_id: e.userid}, {$set: {"profile.team": e.teamid}});
         }
+    },
+    updatePurpose: function(e) {
+        BuildSessions.update({'_id': e.sessionid}, {$pull: {'purpose': {'teamid': e.teamid}}});
+        BuildSessions.update({'_id': e.sessionid}, {$push: {'purpose': {'teamid': e.teamid, 'value': e.purpose}}});
+
+        try {
+            let session = BuildSessions.findOne({'_id': e.sessionid});
+            let hooks = Meteor.settings.slack.webhooks;
+
+            const result = HTTP.call('POST', hooks.filter(hook => hook.teamid===e.teamid)[0].URL, {
+                data: { "text": moment(session.start).calendar() + " we're working on " + e.purpose}
+            });
+            return true;
+        } catch (e) {
+            // Got a network error, timeout, or HTTP error in the 400 or 500 range.
+            return false;
+        }
     }
+
 
 });
