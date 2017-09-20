@@ -64,6 +64,27 @@ Meteor.methods({
         } else {
             Roles.removeUsersFromRoles(e.targetUserId, ['admin']);
         }
+    },
+
+    setTeam: function(e) {
+        let loggedInUser = Meteor.user();
+
+        // //if this is a user changing
+        // if(Meteor.userId()==e.userid) {
+        //     Meteor.users.update({_id: e.userid}, {$set: {"profile.team": e.teamid}});
+        // }
+
+        if (!loggedInUser ||
+            !Roles.userIsInRole(loggedInUser,
+                ['admin'])) {
+            throw new Meteor.Error(403, "Access denied: you must be logged in as an admin")
+        }
+
+        if(e.teamid==='0') {
+            Meteor.users.update({_id: e.userid}, {$unset: {"profile.team": ''}});
+        } else {
+            Meteor.users.update({_id: e.userid}, {$set: {"profile.team": e.teamid}});
+        }
     }
 
 });

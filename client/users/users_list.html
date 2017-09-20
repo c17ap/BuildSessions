@@ -1,18 +1,37 @@
 <template name="usersList">
     <div class="usersList">
         <!--eventually this should be by team....-->
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <td>user</td>
+                <td>team</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
         {{#each user}}
-           <div>
-               <span>{{username}}</span>
-               {{#if isAdmin _id}}
-                   <span class="label label-primary">admin</span>
-               {{/if}}
+           <tr>
+               <td>{{username}}
+                   {{#if isAdmin _id}}
+                     <span class="label label-primary">admin</span>
+                   {{/if}}
+               </td>
+               <td><a href="#" id="{{_id}}" class="team editable editable-click" data-type="select"
+                      data-url="/post" data-pk="1" data-title="team" data-value="{{profile.team}}">
+                   {{profile.team}} </a></td>
+
+               <td>
                {{#if isInRole 'admin'}}
                    {{#if isNotMe _id}}
                      <button class="{{revokegrant _id}}" id="{{_id}}">{{revokegrant _id}} permission</button>
                    {{/if}}
                {{/if}}
-           </div>
-        {{/each}}
+               </td>
+           </tr>
+          {{/each}}
+            </tbody>
+        </table>
     </div>
 </template>

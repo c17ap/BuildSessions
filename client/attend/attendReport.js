@@ -10,7 +10,7 @@ Template.attendReport.helpers({
             Session.set('start', moment().startOf('week').add(1, 'days')._d);
             Session.set('end', moment().hour(23)._d);
         }
-        return Meteor.users.find({}, {
+        return Meteor.users.find({'profile.team': {$exists: true}}, {
             transform: function (doc) {
                 doc.sessions = [];
                 BuildSessions.find({
@@ -26,7 +26,7 @@ Template.attendReport.helpers({
                 doc.count = doc.sessions.length;
                 return doc;
             },
-            sort: {username: 1}
+            sort: {'profile.team': 1, 'username': 1}
         });
     },
     noattend: function(count) {
