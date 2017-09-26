@@ -32,6 +32,24 @@ Meteor.methods({
         if(e.food)  session['food'] = [];
 
         BuildSessions.insert(session);
+
+        // announce on slack:
+        try {
+            let hooks = Meteor.settings.slack.webhooks;
+
+            for(let i = 0; i<hooks.length; i++) {
+                const result = HTTP.call('POST', hooks[i].URL, {
+                        data: { "text": "A new build session has been added " + moment(e.starttime).calendar()}
+                    });
+            }
+
+            return true;
+        } catch (e) {
+            // Got a network error, timeout, or HTTP error in the 400 or 500 range.
+            return false;
+        }
+
+
     },
     removeSession: function(e) {
         var loggedInUser = Meteor.user()
@@ -95,7 +113,8 @@ Meteor.methods({
             let hooks = Meteor.settings.slack.webhooks;
 
             const result = HTTP.call('POST', hooks.filter(hook => hook.teamid===e.teamid)[0].URL, {
-                data: { "text": moment(session.start).calendar() + " we're working on " + e.purpose}
+                data: { "text": moment(session.start).calendar() + " we're working on " + e.purpose
+                + " _(updated by " + Meteor.user().username + ")_"}
             });
             return true;
         } catch (e) {
