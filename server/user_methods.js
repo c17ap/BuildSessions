@@ -39,7 +39,10 @@ Meteor.methods({
 
             for(let i = 0; i<hooks.length; i++) {
                 const result = HTTP.call('POST', hooks[i].URL, {
-                        data: { "text": "A new build session has been added " + moment(e.starttime).calendar()}
+                        data: { "text": "A new build session has been added "
+                            + moment(e.starttime).subtract(4, 'hours').calendar()} //shim for timezone on server....
+
+                            // + moment.tz(e.starttime, "America/New_York").calendar()}
                     });
             }
 
@@ -113,7 +116,8 @@ Meteor.methods({
             let hooks = Meteor.settings.slack.webhooks;
 
             const result = HTTP.call('POST', hooks.filter(hook => hook.teamid===e.teamid)[0].URL, {
-                data: { "text": moment(session.start).calendar() + " we're working on " + e.purpose
+                data: { "text": moment(session.start).subtract(4, 'hours').calendar() + //shim for timezone on server
+                " we're working on " + e.purpose
                 + " _(updated by " + Meteor.user().username + ")_"}
             });
             return true;
