@@ -170,6 +170,7 @@ Template.buildSessionList.events({
         } else {
             BuildSessions.update({_id: this._id}, {$pull: {attend: Meteor.userId()}});
         }
+        BuildSessions.update({_id: this._id}, {$pull: {food: Meteor.userId()}});
       },
 
     'click .coming': function (e) {
