@@ -10,8 +10,8 @@
     color: #d9534f;
 }
 
-.absent {
-    color: #d9534f;
+.present {
+    font-weight: bolder;
 }
 
 .comma-list {

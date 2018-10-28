@@ -23,12 +23,13 @@ Meteor.methods({
         var session = {
             start: e.starttime,
             end: e.endtime,
-            locktime: e.locktime,
             createdBy: Meteor.userId(),
             attend: [],
+            present: [],
             hasFood: e.food,
             purpose: []
         };
+        if(e.eventname.length>0) session['eventname'] = e.eventname;
         if(e.food)  session['food'] = [];
 
         BuildSessions.insert(session);

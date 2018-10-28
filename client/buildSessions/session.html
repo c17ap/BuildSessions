@@ -1,0 +1,43 @@
+<template name="session">
+    <div class="buildSession container-fluid">
+        <div class="h4">
+        This page is under development.
+        </div>
+
+        {{#each session}}
+            {{dateMoment start}}
+            <small>{{durationMoment start end}}</small>
+
+            {{#each team}}
+                {{#if anybodycoming .. value}}
+                    {{value}}:
+                    <ul class="comma-list">
+                        {{#each queryuser ../attend value ../_id}}
+                            <li class="small {{present}}">{{username}}
+                            </li>
+                        {{/each}}
+                    </ul>
+                    (working on
+
+                        {{purpose ../_id value}}
+
+                    )
+
+                    <br />
+                {{/if}}
+            {{/each}}
+            {{#if food _id}}
+                food: <ul class="comma-list">
+
+                <!--WORKING: need to pass user list of food eaters-->
+                {{#each eating .}}
+                    <li class="small">
+                        {{username}}
+                    </li>
+                {{/each}}
+
+            </ul>
+            {{/if}}
+        {{/each}}
+    </div>
+</template>

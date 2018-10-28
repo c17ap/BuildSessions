@@ -9,7 +9,7 @@ Template.addSession.events({
         Meteor.call('addSession', {
             starttime: starttime.toDate(),
             endtime: endtime.toDate(),
-            locktime: $('#locktime').val(),
+            eventname: e.target.eventname.value,
             food: $('#foodsignup').prop('checked')
         }, (err, res) => {
             if (err) {

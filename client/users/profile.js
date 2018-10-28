@@ -12,6 +12,7 @@ Template.profile.helpers({
 Template.profile.rendered = function () {
     $.fn.editable.defaults.mode = 'inline';
 
+    //team:
     var source = [];
     for(var i = 0; i<Teams.length; i++) {
         source.push({
@@ -27,6 +28,16 @@ Template.profile.rendered = function () {
         success: function (response, newValue) {
             Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.team": newValue}});
         }
+    });
+
+    //allergies:
+    $('#allergies').editable({
+      emptytext: 'no allergies',
+      value: Meteor.user().profile.allergies,
+      source: source,
+      success: function (response, newValue) {
+        Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.allergies": newValue}});
+      }
     });
 
 

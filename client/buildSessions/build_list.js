@@ -13,17 +13,11 @@ Template.buildSessionList.helpers({
             {end: {$gte: moment().toDate()}},
             {sort: { start : 1 } });
     },
-    isAdmin: function() {
-        return Roles.userIsInRole(Meteor.userId(), ['admin']);
-    },
-    dateMoment: function(start) {
-        return moment(start).format('dddd M/D @ h:mm');
-    },
-    durationMoment: function(start, end) {
-        return moment(end).to(moment(start), true);
-    },
     food: function(sessionid) {
         return BuildSessions.findOne(sessionid).hasFood;
+    },
+    anyEating: function(sessionid) {
+        return BuildSessions.findOne(sessionid).hasFood && BuildSessions.findOne(sessionid).food.length>0;
     },
     iseating: function(sessionid) {
         return _.contains(BuildSessions.findOne({_id: sessionid}).food, Meteor.userId());;
@@ -33,6 +27,14 @@ Template.buildSessionList.helpers({
     },
     iscoming: function(sessionid) {
         return thisuseriscoming(sessionid);
+    },
+    isHere: function() {
+      return _.contains(BuildSessions.findOne({_id: this._id}).present, Meteor.userId());
+    },
+    isNow: function() {
+        // console.log('hello world')
+        // console.log(moment())
+        return this.start<moment()
     },
     success: function(sessionid) {
         return thisuseriscoming(sessionid)?'success':'';
@@ -55,14 +57,20 @@ Template.buildSessionList.helpers({
     team: function() {
         return Teams;
     },
+    supervisorWrap: function(value) {
+        return value=='0'?'supervisor':value;
+    },
+    notZero: function(value) {
+        return value!=='0';
+    },
     queryuser: function(users, teamid, sessionid) {
         return Meteor.users.find({
             _id: {$in: users},
-            profile: {team: teamid}
+            'profile.team': teamid
         }, {
             transform: function (doc) {
-                    doc.isAbsent = BuildSessions.find({_id: sessionid, absent: doc._id}).count()>0
-                    doc.absent = doc.isAbsent?"absent":"";
+                    doc.isAbsent = BuildSessions.find({_id: sessionid, present: doc._id}).count()==0
+                    doc.present = doc.isAbsent?"":"present";
                     doc.sessionid = sessionid;
                     // if(!Meteor.userId()) doc.username = doc.username.replace(/[\w-]/g, 'x'); //anon if not logged in
                 return doc;
@@ -76,25 +84,18 @@ Template.buildSessionList.helpers({
         //give all the users attending
         return Meteor.users.find({
             _id: {$in: session.attend},
-            profile: {team: teamid}
+           'profile.team': teamid
         }).count()> 0;
     },
     eating: function(session) {
         return Meteor.users.find({
             _id: {$in: session.food}
-        }
-        // , {
-            // transform: function (doc) {
-            //     if(!Meteor.userId()) doc.username = doc.username.replace(/[\w-]/g, 'x'); //anon if not logged in
-            //     return doc;
-            // }
-        // }
-        );
+        });
     },
-    lockMoment: function() {
-        l = moment(this.start).subtract(this.locktime, 'hours')
-        if(l.isBefore(moment())) return "attendance locked"
-        else return "locked " + l.fromNow();
+    eatingCount: function(session) {
+        return Meteor.users.find({
+          _id: {$in: session.food}
+        }).count();
     }
 });
 
@@ -151,26 +152,33 @@ Template.buildSessionList.rendered = function () {
 };
 
 Template.buildSessionList.events({
-
     //if you click on a person
-    'click li': function() {
+      'click li': function() {
         if(Roles.userIsInRole(Meteor.userId(), ['admin'])) {
-            if(this.isAbsent) BuildSessions.update({_id: this.sessionid}, {$pull: {absent: this._id}});
-            else BuildSessions.update({_id: this.sessionid}, {$addToSet: {absent: this._id}});
+            if(this.isAbsent) BuildSessions.update({_id: this.sessionid}, {$addToSet: {present: this._id}});
+            else BuildSessions.update({_id: this.sessionid}, {$pull: {present: this._id}});
         }
-    },
+      },
+
+  'click .present': function(e) {
+    e.preventDefault();
+    BuildSessions.update({_id: this._id}, {$addToSet: {present: Meteor.userId()}});
+  },
+  'click .notpresent': function(e) {
+    e.preventDefault();
+    BuildSessions.update({_id: this._id}, {$pull: {present: Meteor.userId()}});
+  },
+
     'click .not-coming': function(e) {
         e.preventDefault();
 
         //convert the startime to 24 hour time, make a duration out of that, add it to the start date.
         // var eventstart = moment(this.date.date).add(moment.duration(moment(this.starttime, ["h:mm A"]).format("HH:mm")));
 
-        if(moment(this.start).diff(moment(), 'hours')<this.locktime) {//if it is too late
-            BuildSessions.update({_id: this._id}, {$addToSet: {absent: Meteor.userId()}});
-        } else {
-            BuildSessions.update({_id: this._id}, {$pull: {attend: Meteor.userId()}});
-        }
-      },
+        BuildSessions.update({_id: this._id}, {$pull: {attend: Meteor.userId()}});
+        BuildSessions.update({_id: this._id}, {$pull: {present: Meteor.userId()}});
+        BuildSessions.update({_id: this._id}, {$pull: {food: Meteor.userId()}});
+    },
 
     'click .coming': function (e) {
         e.preventDefault();
