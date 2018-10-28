@@ -40,7 +40,8 @@ Meteor.methods({
 
             for(let i = 0; i<hooks.length; i++) {
                 const result = HTTP.call('POST', hooks[i].URL, {
-                        data: { "text": "A new build session has been added "
+                        data: { "text": (e.eventname.length>0?e.eventname:"A new build session")
+                            + " has been added "
                             + moment(e.starttime).subtract(4, 'hours').calendar()} //shim for timezone on server....
 
                             // + moment.tz(e.starttime, "America/New_York").calendar()}
