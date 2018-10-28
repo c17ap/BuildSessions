@@ -58,10 +58,10 @@ Template.buildSessionList.helpers({
         return Teams;
     },
     supervisorWrap: function(value) {
-        return value=='0'?'supervisor':value;
+        return value=='1'?'supervisor':value;
     },
     notZero: function(value) {
-        return value!=='0';
+        return value!=='1';
     },
     queryuser: function(users, teamid, sessionid) {
         return Meteor.users.find({

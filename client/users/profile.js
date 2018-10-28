@@ -36,7 +36,8 @@ Template.profile.rendered = function () {
       value: Meteor.user().profile.allergies,
       source: source,
       success: function (response, newValue) {
-        Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.allergies": newValue}});
+        if(newValue=="")  Meteor.users.update({_id: Meteor.userId()}, {$unset: {"profile.allergies": ""}});
+        else Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.allergies": newValue}});
       }
     });
 
