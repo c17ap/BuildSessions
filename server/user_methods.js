@@ -1,6 +1,10 @@
 /**
  * Created by charlie on 1/29/17.
  */
+
+Meteor.setInterval(function() {
+    Meteor.call('sendAttendanceMessage');
+}, 6000); // every 600000=10 minutes run
 Meteor.methods({
     /**
      * add a build session
@@ -27,7 +31,8 @@ Meteor.methods({
             attend: [],
             present: [],
             hasFood: e.food,
-            purpose: []
+            purpose: [],
+            attendMessageSent: false,
         };
         if(e.eventname.length>0) session['eventname'] = e.eventname;
         if(e.food)  session['food'] = [];
@@ -55,6 +60,44 @@ Meteor.methods({
         }
 
 
+    },
+    sendAttendanceMessage: function() {
+        let session = BuildSessions.findOne(
+          {
+            attendMessageSent: false,
+            start: {$lte: moment().subtract(30, "minutes").toDate()}
+          });
+        if(!session) return;
+        BuildSessions.update({_id:session._id}, {$set: {attendMessageSent: true}});
+
+        let users = _.difference(session.attend, session.present);
+        for(let i =0; i<users.length; i++) {
+           let user = Meteor.users.findOne({_id: users[i]});
+           if(!user.services.google) continue;
+           console.log(user.services.google.email);
+           Email.send({
+             email: user.services.google.email,
+             from: 'admin@buildsession.com',
+             subject: 'Build Session Attendance',
+             html: `
+Hello ${user.username}, 
+ 
+You signed up for a build session today but are not currently listed as in attendance.
+
+If you are at the build session, please <a href="http://www.buildsession.com/present/${user._id}>click here</a> or go to buildsession.com and mark yourself here!
+
+If you are not at the build session, you do not need to do anything, you have been marked absent.
+
+For build sessions, our policy is that you should mark yourself present if you are here, and you
+should not be at a build session without being marked present.  
+             `});
+        }
+    },
+    markPresent: function(userid) {
+        BuildSessions.update(
+          {start: {$lte: moment().toDate()}, end: {$gte: moment().toDate()}},
+          {$addToSet: {present: userid}}
+          );
     },
     removeSession: function(e) {
         var loggedInUser = Meteor.user()
