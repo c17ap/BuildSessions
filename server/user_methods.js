@@ -4,7 +4,7 @@
 
 Meteor.setInterval(function() {
     Meteor.call('sendAttendanceMessage');
-}, 6000); // every 600000=10 minutes run
+}, 60000); // every 60000=1 minutes run
 Meteor.methods({
     /**
      * add a build session
