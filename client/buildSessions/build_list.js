@@ -45,7 +45,7 @@ Template.buildSessionList.helpers({
             return p.purpose.find(o => o.teamid===teamid).value;
         }
         else {
-            return '...';
+            return false;
         }
     },
     purposeEnabled: function() {
@@ -191,6 +191,25 @@ Template.buildSessionList.events({
     'click .not-eating': function(e) {
         e.preventDefault();
         BuildSessions.update({_id: this._id}, {$pull: {food: Meteor.userId()}});
+    },
+    'click .purposeCreate': function(e) {
+        e.preventDefault();
+      sid = this.id.split('-')[0];
+      tid = this.id.split('-')[1];
+      if (Meteor.userId()) {
+        Meteor.call('updatePurpose', {
+          sessionid: sid,
+          teamid: tid,
+          purpose: ' '
+        }, (err, res) => {
+          if (err) {
+            alert(err);
+          } else {
+            // success!
+          }
+        });
+      }
+      editpurpose()
     },
     'click .delete': function(e) {
         e.preventDefault();

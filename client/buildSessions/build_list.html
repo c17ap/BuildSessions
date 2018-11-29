@@ -68,14 +68,18 @@
                                 {{/each}}
                             </ul>
                             {{#if notZero value}}
-                            (working on
-                                <a href="#" class="purpose {{purposeDisabledStyle}}" id="{{../_id}}-{{value}}" data-type="text"
-                                           data-pk="1" data-url="/post"
-                                           data-disabled="{{purposeEnabled}}"
-                                           data-title="working on ">
-                                    {{purpose ../_id value}}
-                                </a>
-                            )
+
+                                    <a href="#" class="purpose {{purposeDisabledStyle}}" id="{{../_id}}-{{value}}" data-type="text"
+                                               data-pk="1" data-url="/post"
+                                               data-disabled="{{purposeEnabled}}"
+                                               data-title="working on ">
+                                        {{#if purpose ../_id value}}
+                                            {{purpose ../_id value}}
+                                        {{else}}
+                                            <span class=" glyphicon glyphicon-plus" style="font-size: xx-small"></span>
+                                        {{/if}}
+                                    </a>
+
                             {{/if}}
 
                             <br />
