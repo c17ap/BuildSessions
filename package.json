@@ -2,12 +2,14 @@
   "name": "buildSessions",
   "private": true,
   "scripts": {
-    "start": "meteor run"
+    "start": "meteor --settings settings.json"
   },
   "dependencies": {
     "@babel/runtime": "7.0.0-beta.55",
     "babel-runtime": "^6.26.0",
     "bcrypt": "^1.0.3",
-    "meteor-node-stubs": "~0.2.0"
+    "botkit": "^0.7.4",
+    "meteor-node-stubs": "~0.2.0",
+    "request": "^2.88.0"
   }
 }

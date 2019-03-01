@@ -2,7 +2,25 @@
  * Created by charlie on 1/29/17.
  */
 
-Meteor.setInterval(function() {
+var Botkit = require('botkit');
+var request = require('request');
+
+var controller = Botkit.slackbot({
+    clientId: Meteor.settings.slack.clientID,
+    clientSecret: Meteor.settings.slack.clientSecret,
+    clientSigningSecret: Meteor.settings.slack.clientSigningSecret,
+    scopes: ['bot'],
+});
+
+controller.on('channel_join', function (bot, message) {
+    bot.reply(message, 'Hi! I\'m BuildSessions');
+});
+
+var bot = controller.spawn({
+    token: Meteor.settings.slack.botUserOAuthToken
+})
+
+Meteor.setInterval(function () {
     Meteor.call('sendAttendanceMessage');
 }, 60000); // every 60000=1 minutes run
 Meteor.methods({
@@ -34,23 +52,40 @@ Meteor.methods({
             purpose: [],
             attendMessageSent: false,
         };
-        if(e.eventname.length>0) session['eventname'] = e.eventname;
-        if(e.food)  session['food'] = [];
-
-        BuildSessions.insert(session);
+        if (e.eventname.length > 0) session['eventname'] = e.eventname;
+        if (e.slackChannel.length > 0 && Meteor.user().profile.slackUserToken) {
+            request.post("https://slack.com/api/channels.create", {
+                json: {
+                    name: e.slackChannel,
+                    validate: false
+                },
+                auth: {
+                    bearer: Meteor.user().profile.slackUserToken
+                }
+            }, Meteor.bindEnvironment((err, resp, body) => {
+                session.slackId = body.channel.id
+                session.slackName = body.channel.name
+                if (e.food) session['food'] = [];
+                BuildSessions.insert(session);
+            }))
+        } else {
+            if (e.food) session['food'] = [];
+            BuildSessions.insert(session);
+        }
 
         // announce on slack:
         try {
-            let hooks = Meteor.settings.slack.webhooks;
+            let teams = Meteor.settings.slack.channels;
 
-            for(let i = 0; i<hooks.length; i++) {
-                const result = HTTP.call('POST', hooks[i].URL, {
-                        data: { "text": (e.eventname.length>0?e.eventname:"A new build session")
-                            + " has been added "
-                            + moment(e.starttime).subtract(4, 'hours').calendar()} //shim for timezone on server....
-
-                            // + moment.tz(e.starttime, "America/New_York").calendar()}
-                    });
+            for (let i = 0; i < teams.length; i++) {
+                bot.say(
+                    {
+                        text: `Hey, ${teams[i].teamfriendlyname}! There's a new build session ${moment(e.starttime).subtract(4, 'hours').calendar()}.${
+                            session['eventname'] ? ` It's called ${session['eventname']}.` : ""
+                            }`,
+                        channel: teams[i].channelid // a valid slack channel, group, mpim, or im ID
+                    }
+                );
             }
 
             return true;
@@ -61,35 +96,35 @@ Meteor.methods({
 
 
     },
-    sendAttendanceMessage: function() {
+    sendAttendanceMessage: function () {
         let session = BuildSessions.findOne(
-          {
-            attendMessageSent: false,
-            start: {$lte: moment().subtract(30, "minutes").toDate()}
-          });
-        if(!session) return;
-        BuildSessions.update({_id:session._id}, {$set: {attendMessageSent: true}});
+            {
+                attendMessageSent: false,
+                start: { $lte: moment().subtract(30, "minutes").toDate() }
+            });
+        if (!session) return;
+        BuildSessions.update({ _id: session._id }, { $set: { attendMessageSent: true } });
 
         let users = _.difference(session.attend, session.present);
-        for(let i =0; i<users.length; i++) {
-           let user = Meteor.users.findOne({_id: users[i]});
-           let email;
-           if(user.services.google) {
-               email = user.services.google.email;
-           } else if(user.emails) {
-               email = user.emails[0].address;
-           } else {
-               console.log("err: no email");
-               console.log(user);
-               continue;
-           }
+        for (let i = 0; i < users.length; i++) {
+            let user = Meteor.users.findOne({ _id: users[i] });
+            let email;
+            if (user.services.google) {
+                email = user.services.google.email;
+            } else if (user.emails) {
+                email = user.emails[0].address;
+            } else {
+                console.log("err: no email");
+                console.log(user);
+                continue;
+            }
 
-           console.log("notification email: " + email);
-           Email.send({
-             to: email,
-             from: 'admin@buildsession.com',
-             subject: 'Build Session Attendance',
-             html: `
+            console.log("notification email: " + email);
+            Email.send({
+                to: email,
+                from: 'admin@buildsession.com',
+                subject: 'Build Session Attendance',
+                html: `
 <!DOCTYPE html><html lang="en">
 <body><p>Hello ${user.username},</p>
  
@@ -106,13 +141,13 @@ should not be at a build session without being marked present. </p>
              `});
         }
     },
-    markPresent: function(userid) {
+    markPresent: function (userid) {
         BuildSessions.update(
-          {start: {$lte: moment().toDate()}, end: {$gte: moment().toDate()}},
-          {$addToSet: {present: userid}}
-          );
+            { start: { $lte: moment().toDate() }, end: { $gte: moment().toDate() } },
+            { $addToSet: { present: userid } }
+        );
     },
-    removeSession: function(e) {
+    removeSession: function (e) {
         var loggedInUser = Meteor.user()
 
         //logged in user must be admin
@@ -134,18 +169,18 @@ should not be at a build session without being marked present. </p>
             throw new Meteor.Error(403, "Access denied: you must be logged in as an admin")
         }
 
-        if(loggedInUser==e.targetUserId) {
+        if (loggedInUser == e.targetUserId) {
             throw new Meteor.Error(403, "Access denied: you can't change your own permissions");
         }
 
-        if(e.hasPermission) {
+        if (e.hasPermission) {
             Roles.addUsersToRoles(e.targetUserId, ['admin']);
         } else {
             Roles.removeUsersFromRoles(e.targetUserId, ['admin']);
         }
     },
 
-    setTeam: function(e) {
+    setTeam: function (e) {
         let loggedInUser = Meteor.user();
 
         // //if this is a user changing
@@ -159,31 +194,74 @@ should not be at a build session without being marked present. </p>
             throw new Meteor.Error(403, "Access denied: you must be logged in as an admin")
         }
 
-        if(e.teamid==='0') {
-            Meteor.users.update({_id: e.userid}, {$unset: {"profile.team": ''}});
+        if (e.teamid === '0') {
+            Meteor.users.update({ _id: e.userid }, { $unset: { "profile.team": '' } });
         } else {
-            Meteor.users.update({_id: e.userid}, {$set: {"profile.team": e.teamid}});
+            Meteor.users.update({ _id: e.userid }, { $set: { "profile.team": e.teamid } });
         }
     },
-    updatePurpose: function(e) {
-        BuildSessions.update({'_id': e.sessionid}, {$pull: {'purpose': {'teamid': e.teamid}}});
-        BuildSessions.update({'_id': e.sessionid}, {$push: {'purpose': {'teamid': e.teamid, 'value': e.purpose}}});
+    updatePurpose: function (e) {
+        BuildSessions.update({ '_id': e.sessionid }, { $pull: { 'purpose': { 'teamid': e.teamid } } });
+        BuildSessions.update({ '_id': e.sessionid }, { $push: { 'purpose': { 'teamid': e.teamid, 'value': e.purpose } } });
 
         try {
-            let session = BuildSessions.findOne({'_id': e.sessionid});
-            let hooks = Meteor.settings.slack.webhooks;
+            let session = BuildSessions.findOne({ '_id': e.sessionid });
+            let channels = Meteor.settings.slack.channels;
 
-            const result = HTTP.call('POST', hooks.filter(hook => hook.teamid===e.teamid)[0].URL, {
-                data: { "text": moment(session.start).subtract(4, 'hours').calendar() + //shim for timezone on server
-                " we're working on " + e.purpose
-                + " _(updated by " + Meteor.user().username + ")_"}
-            });
+            for (i in channels) {
+                if (channels[i].teamid == e.teamid) {
+                    bot.say(
+                        {
+                            text: `Hey, ${channels[i].teamfriendlyname}! During the build session ${moment(session.start).subtract(4, 'hours').calendar()}, we're working on ${e.purpose}. (Updated by ${Meteor.user().username()})`,
+                            channel: channels[i].channelid // a valid slack channel, group, mpim, or im ID
+                        }
+                    );
+                }
+            }
             return true;
         } catch (e) {
             // Got a network error, timeout, or HTTP error in the 400 or 500 range.
             return false;
         }
+    },
+    getSlackOAuthURL: function () {
+        return `https://slack.com/oauth/authorize?scope=channels:write&client_id=${encodeURIComponent(Meteor.settings.slack.OAuthClientID)}&redirect_uri=${encodeURIComponent(Meteor.settings.slack.OAuthCallbackURL)}`
+    },
+    connectSlack: function (code) {
+        request.post("https://slack.com/api/oauth.access", {
+            form: {
+                client_id: Meteor.settings.slack.OAuthClientID,
+                client_secret: Meteor.settings.slack.OAuthClientSecret,
+                code: code,
+                redirect_uri: Meteor.settings.slack.OAuthCallbackURL,
+            }
+        }, Meteor.bindEnvironment((err, resp, body) => {
+            var bodyObj = JSON.parse(body);
+            var token = bodyObj.access_token;
+            Meteor.users.update({ _id: Meteor.userId() }, { $set: { "profile.slackUserToken": token } })
+        }));
+    },
+    joinSlackChannel: function (name) {
+        request.post("https://slack.com/api/channels.join", {
+            json: {
+                name: `#${name}`,
+                validate: false
+            },
+            auth: {
+                bearer: Meteor.user().profile.slackUserToken
+            },
+        }, (err, resp, body) => console.log(body))
+    },
+    // Yes, join takes a channel name, while leave takes an ID
+    leaveSlackChannel: function (id) {
+        request.post("https://slack.com/api/channels.leave", {
+            json: {
+                channel: id,
+            },
+            auth: {
+                bearer: Meteor.user().profile.slackUserToken
+            }
+        }, (err, resp, body) => console.log(body))
     }
-
 
 });
