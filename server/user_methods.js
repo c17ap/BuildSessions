@@ -250,7 +250,7 @@ should not be at a build session without being marked present. </p>
             auth: {
                 bearer: Meteor.user().profile.slackUserToken
             },
-        }, (err, resp, body) => console.log(body))
+        })
     },
     // Yes, join takes a channel name, while leave takes an ID
     leaveSlackChannel: function (id) {
@@ -261,7 +261,7 @@ should not be at a build session without being marked present. </p>
             auth: {
                 bearer: Meteor.user().profile.slackUserToken
             }
-        }, (err, resp, body) => console.log(body))
+        })
     }
 
 });
