@@ -1,0 +1,11 @@
+<template name="slackCallback">
+	<div class="container-fluid connecting">
+		Hello {{currentUser.username}}! Just a moment, your slack account is being connected.
+	</div>
+	<div class="done-connecting" style="display: none">
+		<div class="jumbotron">
+			<h1>Yay, {{currentUser.username}}! You're connected to slack.</h1>
+			<p>You'll automatically be added to slack channels for events that you sign up for here.</p>
+		</div>
+	</div>
+</template>

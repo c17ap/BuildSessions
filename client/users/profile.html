@@ -1,22 +1,33 @@
 <template name="profile">
     <div class="container-fluid">
-        Hello {{currentUser.username}} <br/>
+        Hello {{currentUser.username}} <br />
         Your Team:
-        <a href="#" id="select" class="editable editable-click" data-type="select" data-url="/post" data-pk="1" data-title="team">
+        <a href="#" id="select" class="editable editable-click" data-type="select" data-url="/post" data-pk="1"
+            data-title="team">
         </a>
-        <br/>
+        <br />
 
         Food Allergies/Concerns:
-        <a href="#" id="allergies" class="editable editable-click" data-type="text" data-url="/post" data-pk="1" data-title="allergies">
+        <a href="#" id="allergies" class="editable editable-click" data-type="text" data-url="/post" data-pk="1"
+            data-title="allergies">
         </a>
-        <br/>
+        <br />
 
         Your Attendance:
         <ul class="comma-list">
-        {{#each attends}}
+            {{#each attends}}
             <li>{{attend}}</li>
-        {{/each}}
+            {{/each}}
         </ul>
+        <br />
+
+        Connect your slack account: <span class="slack-connected">You're connected to slack! <button
+                id="disconnect-slack" class="btn btn-sm btn-danger">Disconnect Slack</button></span><br />
+        <a id="slack-oauth-link">
+            <img alt="Sign in with Slack" height="40" width="172"
+                src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+                srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
+        </a>
 
 
 

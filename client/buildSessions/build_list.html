@@ -2,108 +2,124 @@
     <div class="buildSession container-fluid">
 
         <table class="table table-hover">
-        <tbody>
-        {{#each buildSession}}
-            <tr class="buildSession row {{success _id}}">
-                <td class="buildSession-date col-xs-3">
+            <tbody>
+                {{#each buildSession}}
+                <tr class="buildSession row {{success _id}}">
+                    <td class="buildSession-date col-xs-3">
 
-                    <div class="h4">
-                    {{#if eventname}}<big>{{eventname}}</big><br/>{{/if}}
-                        <a href="session/{{_id}}">{{dateMoment start}}</a>
-                        {{#if isAdmin}}
+                        <div class="h4">
+                            {{#if eventname}}<big>{{eventname}}</big><br />{{/if}}
+                            <a href="session/{{_id}}">{{dateMoment start}}</a>
+                            {{#if isAdmin}}
                             <a class="btn-xs delete" href="#"><span class="glyphicon glyphicon-remove"></span></a>
-                        {{/if}}
-
-                        <br />
-                        <small>
-                            {{durationMoment start end}}
-                        </small>
-                        {{#if iscoming _id}}
-                        {{#if isNow}}
-                            <br/>
-                            {{#if isHere}}
-                                <button class="btn btn-lg btn-default notpresent" id="{{_id}}">Absent</button>
-                            {{else}}
-                                <button class="btn btn-lg btn-danger present" id="{{_id}}">I'm Here!</button>
-                            {{/if}}
-                        {{/if}}
-                        {{/if}}
-
-                    </div>
-                </td>
-                {{#if currentUser}}
-                    <td class="buildSession-enroll col-xs-2 middlealign" >
-                      <div class="btn-group-vertical" role="group">
-                        {{#if iscoming _id}}
-                          <button class="btn btn-sm btn-primary coming" id="{{_id}}">Coming</button>
-                          <button class="btn btn-sm btn-default not-coming" id="{{_id}}">Not Coming</button>
-                        {{else}}
-                          <button class="btn btn-sm btn-default coming" id="{{_id}}">Coming</button>
-                          <button class="btn btn-sm btn-primary not-coming" id="{{_id}}">Not Coming</button>
-                        {{/if}}
-                      </div>
-                    {{#if food _id}}
-                        <div class="btn-group-vertical" role="group">
-                            {{#if iseating _id}}
-                                <button class="btn btn-sm btn-primary eating" id="{{_id}}">Eating</button>
-                                <button class="btn btn-sm btn-default not-eating" id="{{_id}}">Not Eating</button>
-                            {{else}}
-                                <button class="btn btn-sm btn-default eating" id="{{_id}}">Eating</button>
-                                <button class="btn btn-sm btn-primary not-eating" id="{{_id}}">Not Eating</button>
-                            {{/if}}
-                        </div>
-                    {{/if}}
-                </td>
-
-                {{/if}}
-                <td class="buildSession-attendance col-md-9">
-
-                    {{#each team}}
-                        {{#if anybodycoming .. value}}
-                           {{supervisorWrap value}}:
-                            <ul class="comma-list">
-                                {{#each queryuser ../attend value ../_id}}
-                                    <li class="small {{present}}">{{username}}
-                                    </li>
-                                {{/each}}
-                            </ul>
-                            {{#if notZero value}}
-
-                                    <a href="#" class="purpose {{purposeDisabledStyle}}" id="{{../_id}}-{{value}}" data-type="text"
-                                               data-pk="1" data-url="/post"
-                                               data-disabled="{{purposeEnabled}}"
-                                               data-title="working on ">
-                                        {{#if purpose ../_id value}}
-                                            {{purpose ../_id value}}
-                                        {{else}}
-                                            <span class=" glyphicon glyphicon-plus" style="font-size: xx-small"></span>
-                                        {{/if}}
-                                    </a>
-
                             {{/if}}
 
                             <br />
+                            <small>
+                                {{durationMoment start end}}
+                            </small><br />
+                            {{#if slackName}}
+                            <small>
+                                This build session has a slack channel linked to it, #<span>{{slackName}}</span>. By
+                                marking yourself as coming to this build session, you will be added to the channel.
+                            </small>
+                            {{/if}}
+                            {{#if iscoming _id}}
+                            {{#if isNow}}
+                            <br />
+                            {{#if isHere}}
+                            <button class="btn btn-lg btn-default notpresent {{#if slackName}}slack-required{{/if}}"
+                                id="{{_id}}">Absent</button>
+                            {{else}}
+                            <button class="btn btn-lg btn-danger present {{#if slackName}}slack-required{{/if}}"
+                                id="{{_id}}">I'm Here!</button>
+                            {{/if}}
+                            {{/if}}
+                            {{/if}}
+
+                        </div>
+                    </td>
+                    {{#if currentUser}}
+                    <td class="buildSession-enroll col-xs-2 middlealign">
+                        <div class="btn-group-vertical {{#if slackName}}slack-required{{/if}}" role="group">
+                            {{#if iscoming _id}}
+                            <button class="btn btn-sm btn-primary coming" id="{{_id}}">Coming</button>
+                            <button class="btn btn-sm btn-default not-coming" id="{{_id}}">Not Coming</button>
+                            {{else}}
+                            <button class="btn btn-sm btn-default coming" id="{{_id}}">Coming</button>
+                            <button class="btn btn-sm btn-primary not-coming" id="{{_id}}">Not Coming</button>
+                            {{/if}}
+                        </div>
+                        {{#if slackName}}
+                        <div class="slack-ineligable">
+                            Connect your slack account to mark yourself as coming to this build session.<br />
+                            <a id="slack-oauth-link">
+                                <img alt="Sign in with Slack" height="40" width="172"
+                                    src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+                                    srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
+                            </a>
+                        </div>
                         {{/if}}
-                   {{/each}}
-                    {{#if anyEating _id}}
+                        {{#if food _id}}
+                        <div class="btn-group-vertical {{#if slackName}}slack-required{{/if}}" role="group">
+                            {{#if iseating _id}}
+                            <button class="btn btn-sm btn-primary eating" id="{{_id}}">Eating</button>
+                            <button class="btn btn-sm btn-default not-eating" id="{{_id}}">Not Eating</button>
+                            {{else}}
+                            <button class="btn btn-sm btn-default eating" id="{{_id}}">Eating</button>
+                            <button class="btn btn-sm btn-primary not-eating" id="{{_id}}">Not Eating</button>
+                            {{/if}}
+                        </div>
+                        {{/if}}
+                    </td>
+
+                    {{/if}}
+                    <td class="buildSession-attendance col-md-9">
+
+                        {{#each team}}
+                        {{#if anybodycoming .. value}}
+                        {{supervisorWrap value}}:
+                        <ul class="comma-list">
+                            {{#each queryuser ../attend value ../_id}}
+                            <li class="small {{present}}">{{username}}
+                            </li>
+                            {{/each}}
+                        </ul>
+                        {{#if notZero value}}
+
+                        <a href="#" class="purpose {{purposeDisabledStyle}}" id="{{../_id}}-{{value}}" data-type="text"
+                            data-pk="1" data-url="/post" data-disabled="{{purposeEnabled}}" data-title="working on ">
+                            {{#if purpose ../_id value}}
+                            {{purpose ../_id value}}
+                            {{else}}
+                            <span class=" glyphicon glyphicon-plus" style="font-size: xx-small"></span>
+                            {{/if}}
+                        </a>
+
+                        {{/if}}
+
+                        <br />
+                        {{/if}}
+                        {{/each}}
+                        {{#if anyEating _id}}
                         food ({{eatingCount .}}):
                         <ul class="comma-list">
 
-                        <!--WORKING: need to pass user list of food eaters-->
-                        {{#each eating .}}
+                            <!--WORKING: need to pass user list of food eaters-->
+                            {{#each eating .}}
                             <li class="small {{present}}">
                                 {{username}}
                                 {{#if profile.allergies}}
-                                    (<b>{{profile.allergies}}</b>)
+                                (<b>{{profile.allergies}}</b>)
                                 {{/if}}
                             </li>
-                        {{/each}}
+                            {{/each}}
                         </ul>
-                    {{/if}}
-                </td>
-            </tr>
-        {{/each}}
-        </tbody>
+                        {{/if}}
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
         </table>
     </div>
 </template>

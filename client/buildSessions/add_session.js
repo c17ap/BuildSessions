@@ -3,14 +3,15 @@
  */
 
 Template.addSession.events({
-    'submit form': function(e) {
+    'submit form': function (e) {
         e.preventDefault();
 
         Meteor.call('addSession', {
             starttime: starttime.toDate(),
             endtime: endtime.toDate(),
             eventname: e.target.eventname.value,
-            food: $('#foodsignup').prop('checked')
+            food: $('#foodsignup').prop('checked'),
+            slackChannel: e.target.slackchannel.value
         }, (err, res) => {
             if (err) {
                 alert(err);
@@ -23,7 +24,7 @@ Template.addSession.events({
     }
 });
 
-Template.addSession.onRendered(function() {
+Template.addSession.onRendered(function () {
     starttime = moment().hours(15).minutes(30).seconds(0);
     endtime = moment().hours(19).minutes(0).seconds(0);
     this.$('#datepicker').datetimepicker({
