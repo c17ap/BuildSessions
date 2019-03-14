@@ -18,12 +18,6 @@
                             <small>
                                 {{durationMoment start end}}
                             </small><br />
-                            {{#if slackName}}
-                            <small>
-                                This build session has a slack channel linked to it, #<span>{{slackName}}</span>. By
-                                marking yourself as coming to this build session, you will be added to the channel.
-                            </small>
-                            {{/if}}
                             {{#if iscoming _id}}
                             {{#if isNow}}
                             <br />

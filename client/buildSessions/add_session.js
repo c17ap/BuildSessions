@@ -11,7 +11,6 @@ Template.addSession.events({
             endtime: endtime.toDate(),
             eventname: e.target.eventname.value,
             food: $('#foodsignup').prop('checked'),
-            slackChannel: e.target.slackchannel.value
         }, (err, res) => {
             if (err) {
                 alert(err);

@@ -53,10 +53,13 @@ Meteor.methods({
             attendMessageSent: false,
         };
         if (e.eventname.length > 0) session['eventname'] = e.eventname;
-        if (e.slackChannel.length > 0 && Meteor.user().profile.slackUserToken) {
+        if (Meteor.user().profile.slackUserToken) {
+            let slackname =
+              ("session-" + (e.eventname.length>0?e.eventname:e.starttime.toDate())).replace(" ", "-").replace(".", "");
+            slackname = slackname.substr(0, Math.min(22, slackname.length));
             request.post("https://slack.com/api/channels.create", {
                 json: {
-                    name: e.slackChannel,
+                    name: slackname,
                     validate: false
                 },
                 auth: {
@@ -80,9 +83,9 @@ Meteor.methods({
             for (let i = 0; i < teams.length; i++) {
                 bot.say(
                     {
-                        text: `Hey, ${teams[i].teamfriendlyname}! There's a new build session ${moment(e.starttime).subtract(4, 'hours').calendar()}.${
-                            session['eventname'] ? ` It's called ${session['eventname']}.` : ""
-                            }`,
+                        text: (session['eventname'].length>0 ? session['eventname'] : 'A new build session')
+                              + " has been added "
+                        + moment(e.starttime).subtract(4, 'hours').calendar(),
                         channel: teams[i].channelid // a valid slack channel, group, mpim, or im ID
                     }
                 );
