@@ -55,7 +55,7 @@ Meteor.methods({
         if (e.eventname.length > 0) session['eventname'] = e.eventname;
         if (Meteor.user().profile.slackUserToken) {
             let slackname =
-              ("session-" + (e.eventname.length>0?e.eventname:e.starttime.toDate())).replace(" ", "-").replace(".", "");
+                ("session-" + (e.eventname.length > 0 ? e.eventname : e.starttime.toDate())).replace(" ", "-").replace(".", "");
             slackname = slackname.substr(0, Math.min(22, slackname.length));
             request.post("https://slack.com/api/channels.create", {
                 json: {
@@ -66,8 +66,13 @@ Meteor.methods({
                     bearer: Meteor.user().profile.slackUserToken
                 }
             }, Meteor.bindEnvironment((err, resp, body) => {
-                session.slackId = body.channel.id
-                session.slackName = body.channel.name
+                console.log(body)
+                try {
+                    session.slackId = body.channel.id
+                    session.slackName = body.channel.name
+                } catch (err) {
+                    console.error(err)
+                }
                 if (e.food) session['food'] = [];
                 BuildSessions.insert(session);
             }))
@@ -83,9 +88,9 @@ Meteor.methods({
             for (let i = 0; i < teams.length; i++) {
                 bot.say(
                     {
-                        text: (session['eventname'].length>0 ? session['eventname'] : 'A new build session')
-                              + " has been added "
-                        + moment(e.starttime).subtract(4, 'hours').calendar(),
+                        text: (session['eventname'].length > 0 ? session['eventname'] : 'A new build session')
+                            + " has been added "
+                            + moment(e.starttime).subtract(4, 'hours').calendar(),
                         channel: teams[i].channelid // a valid slack channel, group, mpim, or im ID
                     }
                 );
