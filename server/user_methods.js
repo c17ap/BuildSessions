@@ -55,7 +55,7 @@ Meteor.methods({
         if (e.eventname.length > 0) session['eventname'] = e.eventname;
         if (Meteor.user().profile.slackUserToken) {
             let slackname =
-                ("session-" + (e.eventname.length > 0 ? e.eventname : e.starttime.toDate())).replace(" ", "-").replace(".", "");
+                ("session-" + (e.eventname.length > 0 ? e.eventname : e.starttime)).replace(" ", "-").replace(".", "");
             slackname = slackname.substr(0, Math.min(22, slackname.length));
             request.post("https://slack.com/api/channels.create", {
                 json: {
@@ -66,7 +66,6 @@ Meteor.methods({
                     bearer: Meteor.user().profile.slackUserToken
                 }
             }, Meteor.bindEnvironment((err, resp, body) => {
-                console.log(body)
                 try {
                     session.slackId = body.channel.id
                     session.slackName = body.channel.name
@@ -84,11 +83,10 @@ Meteor.methods({
         // announce on slack:
         try {
             let teams = Meteor.settings.slack.channels;
-
             for (let i = 0; i < teams.length; i++) {
                 bot.say(
                     {
-                        text: (session['eventname'].length > 0 ? session['eventname'] : 'A new build session')
+                        text: (session['eventname']&&session['eventname'].length > 0 ? session['eventname'] : 'A new build session')
                             + " has been added "
                             + moment(e.starttime).subtract(4, 'hours').calendar(),
                         channel: teams[i].channelid // a valid slack channel, group, mpim, or im ID
@@ -98,6 +96,7 @@ Meteor.methods({
 
             return true;
         } catch (e) {
+            console.log(e);
             // Got a network error, timeout, or HTTP error in the 400 or 500 range.
             return false;
         }
