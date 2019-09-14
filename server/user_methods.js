@@ -53,32 +53,32 @@ Meteor.methods({
             attendMessageSent: false,
         };
         if (e.eventname.length > 0) session['eventname'] = e.eventname;
-        if (Meteor.user().profile.slackUserToken) {
-            let slackname =
-                ("session-" + (e.eventname.length > 0 ? e.eventname : e.starttime)).replace(" ", "-").replace(".", "");
-            slackname = slackname.substr(0, Math.min(22, slackname.length));
-            request.post("https://slack.com/api/channels.create", {
-                json: {
-                    name: slackname,
-                    validate: false
-                },
-                auth: {
-                    bearer: Meteor.user().profile.slackUserToken
-                }
-            }, Meteor.bindEnvironment((err, resp, body) => {
-                try {
-                    session.slackId = body.channel.id
-                    session.slackName = body.channel.name
-                } catch (err) {
-                    console.error(err)
-                }
-                if (e.food) session['food'] = [];
-                BuildSessions.insert(session);
-            }))
-        } else {
+        // if (Meteor.user().profile.slackUserToken) {
+            // let slackname =
+            //     ("session-" + (e.eventname.length > 0 ? e.eventname : e.starttime)).replace(" ", "-").replace(".", "");
+            // slackname = slackname.substr(0, Math.min(22, slackname.length));
+            // request.post("https://slack.com/api/channels.create", {
+            //     json: {
+            //         name: slackname,
+            //         validate: false
+            //     },
+            //     auth: {
+            //         bearer: Meteor.user().profile.slackUserToken
+            //     }
+            // }, Meteor.bindEnvironment((err, resp, body) => {
+            //     try {
+            //         session.slackId = body.channel.id
+            //         session.slackName = body.channel.name
+            //     } catch (err) {
+            //         console.error(err)
+            //     }
+            //     if (e.food) session['food'] = [];
+            //     BuildSessions.insert(session);
+            // }))
+        // } else {
             if (e.food) session['food'] = [];
             BuildSessions.insert(session);
-        }
+        // }
 
         // announce on slack:
         try {

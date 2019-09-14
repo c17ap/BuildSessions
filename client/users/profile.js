@@ -43,20 +43,20 @@ Template.profile.rendered = function () {
         }
     });
 
-    Meteor.call("getSlackOAuthURL", function (err, url) {
-        // alert(url);
-        $("#slack-oauth-link").attr('href', url);
-    })
+    // Meteor.call("getSlackOAuthURL", function (err, url) {
+    //     // alert(url);
+    //     $("#slack-oauth-link").attr('href', url);
+    // })
 
-    $("#disconnect-slack").click(function () {
-        Meteor.users.update({ _id: Meteor.userId() }, { $unset: { "profile.slackUserToken": "" } });
-        $("#slack-oauth-link").show();
-        $(".slack-connected").hide();
-    })
-
-    if (Meteor.user().profile.slackUserToken) {
-        $("#slack-oauth-link").hide();
-    } else {
-        $(".slack-connected").hide();
-    }
+    // $("#disconnect-slack").click(function () {
+    //     Meteor.users.update({ _id: Meteor.userId() }, { $unset: { "profile.slackUserToken": "" } });
+    //     $("#slack-oauth-link").show();
+    //     $(".slack-connected").hide();
+    // })
+    //
+    // if (Meteor.user().profile.slackUserToken) {
+    //     $("#slack-oauth-link").hide();
+    // } else {
+    //     $(".slack-connected").hide();
+    // }
 };

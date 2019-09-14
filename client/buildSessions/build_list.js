@@ -150,11 +150,11 @@ Template.buildSessionList.rendered = function () {
     $.fn.editable.defaults.mode = 'inline';
     editpurpose()
 
-    if (!Meteor.user().profile.slackUserToken) {
+    // if (!Meteor.user().profile.slackUserToken) {
         $(".slack-required").hide()
-    } else {
+    // } else {
         $(".slack-ineligable").hide()
-    }
+    // }
 
     Meteor.call("getSlackOAuthURL", function (err, url) {
         // alert(url);
@@ -198,9 +198,9 @@ Template.buildSessionList.events({
     'click .coming': function (e) {
         e.preventDefault();
         BuildSessions.update({ _id: e.target.id }, { $addToSet: { attend: Meteor.userId() } });
-        if (this.slackId) {
-            Meteor.call('joinSlackChannel', this.slackName)
-        }
+        // if (this.slackId) {
+        //     Meteor.call('joinSlackChannel', this.slackName)
+        // }
     },
     'click .eating': function (e) {
         e.preventDefault();
